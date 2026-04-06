@@ -1,0 +1,20 @@
+﻿export type StudentProfileDetails = {
+  address: string;
+  birthDate: string;
+  className: string;
+  displayName: string;
+  email: string;
+  fatherName: string;
+  fatherPhone: string;
+  fullName: string;
+  gender: string;
+  homeroomTeacher: string;
+  motherName: string;
+  motherPhone: string;
+  phoneNumber: string;
+  roleLabel: string;
+  schoolName: string;
+  schoolYears: string;
+  studentCode: string;
+  validUntil: string;
+};

@@ -1,44 +1,200 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+﻿import React, {useEffect, useState} from 'react';
+import {StatusBar, StyleSheet} from 'react-native';
+import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
+import {STUDENT_DEFAULT_CREDENTIALS} from './src/mocks/auth';
+import {defaultLeaveRequestDraft} from './src/mocks/leaveRequest';
+import {defaultStudentProfileDetails} from './src/mocks/studentProfile';
+import {studentTuitionCard} from './src/mocks/studentSettings';
+import type {LeaveReasonKey, LeaveRequestDraft} from './src/models/leave';
+import type {StudentProfileDetails} from './src/models/profile';
+import {roleOptions} from './src/mocks/roleOptions';
+import type {RoleKey, ScreenKey} from './src/models/navigation';
+import {LoginScreen} from './src/screens/LoginScreen';
+import {OnboardingScreen} from './src/screens/OnboardingScreen';
+import {RoleSelectionScreen} from './src/screens/RoleSelectionScreen';
+import {SplashScreen} from './src/screens/SplashScreen';
+import {StudentAttendanceScreen} from './src/screens/StudentAttendanceScreen';
+import {StudentDashboardScreen} from './src/screens/StudentDashboardScreen';
+import {StudentEditProfileScreen} from './src/screens/StudentEditProfileScreen';
+import {StudentExamScheduleScreen} from './src/screens/StudentExamScheduleScreen';
+import {StudentLeaveRequestPreviewScreen} from './src/screens/StudentLeaveRequestPreviewScreen';
+import {StudentLeaveRequestScreen} from './src/screens/StudentLeaveRequestScreen';
+import {StudentNotificationsScreen} from './src/screens/StudentNotificationsScreen';
+import {StudentProfileScreen} from './src/screens/StudentProfileScreen';
+import {StudentScheduleScreen} from './src/screens/StudentScheduleScreen';
+import {StudentSearchScreen} from './src/screens/StudentSearchScreen';
+import {StudentSettingsScreen} from './src/screens/StudentSettingsScreen';
+import {StudentTuitionPaymentScreen} from './src/screens/StudentTuitionPaymentScreen';
 
 function App() {
-  const isDarkMode = useColorScheme() === 'dark';
+  const [activeScreen, setActiveScreen] = useState<ScreenKey>('splash');
+  const [selectedRole, setSelectedRole] = useState<RoleKey>('student');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [password, setPassword] = useState('');
+  const [studentProfile, setStudentProfile] = useState<StudentProfileDetails>(
+    defaultStudentProfileDetails,
+  );
+  const [leaveDraft, setLeaveDraft] = useState<LeaveRequestDraft>(defaultLeaveRequestDraft);
+  const [tuitionStatus, setTuitionStatus] = useState(studentTuitionCard.status);
+  const [studentSearchReturnScreen, setStudentSearchReturnScreen] = useState<
+    'student-dashboard' | 'student-notifications'
+  >('student-dashboard');
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setActiveScreen('role-selection');
+    }, 1600);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const openOnboarding = (role: RoleKey) => {
+    setSelectedRole(role);
+    setActiveScreen(role === 'student' ? 'student-onboarding' : 'teacher-onboarding');
+  };
+
+  const openLogin = () => {
+    if (selectedRole === 'student') {
+      setPhoneNumber(STUDENT_DEFAULT_CREDENTIALS.phoneNumber);
+      setPassword(STUDENT_DEFAULT_CREDENTIALS.password);
+    } else {
+      setPhoneNumber('');
+      setPassword('');
+    }
+
+    setActiveScreen('login');
+  };
+
+  const openStudentSearch = (returnScreen: 'student-dashboard' | 'student-notifications') => {
+    setStudentSearchReturnScreen(returnScreen);
+    setActiveScreen('student-search');
+  };
+
+  const updateStudentProfile = (field: keyof StudentProfileDetails, value: string) => {
+    setStudentProfile(current => ({...current, [field]: value}));
+  };
+
+  const updateLeaveField = (field: keyof LeaveRequestDraft, value: string) => {
+    setLeaveDraft(current => ({...current, [field]: value}));
+  };
+
+  const updateLeaveReason = (reason: LeaveReasonKey) => {
+    setLeaveDraft(current => ({...current, reason}));
+  };
+
+  const handleTuitionPaymentSuccess = () => {
+    setTuitionStatus('Đã thanh toán');
+    setActiveScreen('student-settings');
+  };
 
   return (
     <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
+      <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" translucent={false} />
+      <SafeAreaView edges={['top', 'bottom']} style={styles.safeArea}>
+        {activeScreen === 'splash' ? <SplashScreen /> : null}
+        {activeScreen === 'role-selection' ? (
+          <RoleSelectionScreen options={roleOptions} onChooseRole={openOnboarding} />
+        ) : null}
+        {activeScreen === 'student-onboarding' ? (
+          <OnboardingScreen onContinue={openLogin} onSkip={openLogin} variant="student" />
+        ) : null}
+        {activeScreen === 'teacher-onboarding' ? (
+          <OnboardingScreen onContinue={openLogin} onSkip={openLogin} variant="teacher" />
+        ) : null}
+        {activeScreen === 'login' ? (
+          <LoginScreen
+            onBackToRoles={() => setActiveScreen('role-selection')}
+            onStudentLoginSuccess={() => setActiveScreen('student-dashboard')}
+            password={password}
+            phoneNumber={phoneNumber}
+            role={selectedRole}
+            setPassword={setPassword}
+            setPhoneNumber={setPhoneNumber}
+          />
+        ) : null}
+        {activeScreen === 'student-dashboard' ? (
+          <StudentDashboardScreen
+            onOpenAttendance={() => setActiveScreen('student-attendance')}
+            onOpenExamSchedule={() => setActiveScreen('student-exam-schedule')}
+            onOpenLeaveRequest={() => setActiveScreen('student-leave-request')}
+            onOpenNotifications={() => setActiveScreen('student-notifications')}
+            onOpenProfile={() => setActiveScreen('student-settings')}
+            onOpenSchedule={() => setActiveScreen('student-schedule')}
+            onOpenSearch={() => openStudentSearch('student-dashboard')}
+          />
+        ) : null}
+        {activeScreen === 'student-attendance' ? (
+          <StudentAttendanceScreen onBack={() => setActiveScreen('student-dashboard')} />
+        ) : null}
+        {activeScreen === 'student-schedule' ? (
+          <StudentScheduleScreen onBack={() => setActiveScreen('student-dashboard')} />
+        ) : null}
+        {activeScreen === 'student-search' ? (
+          <StudentSearchScreen onBack={() => setActiveScreen(studentSearchReturnScreen)} />
+        ) : null}
+        {activeScreen === 'student-notifications' ? (
+          <StudentNotificationsScreen
+            onBack={() => setActiveScreen('student-dashboard')}
+            onOpenSearch={() => openStudentSearch('student-notifications')}
+          />
+        ) : null}
+        {activeScreen === 'student-settings' ? (
+          <StudentSettingsScreen
+            onBack={() => setActiveScreen('student-dashboard')}
+            onOpenPersonalProfile={() => setActiveScreen('student-profile')}
+            onOpenTuitionPayment={() => setActiveScreen('student-tuition-payment')}
+            tuitionStatus={tuitionStatus}
+          />
+        ) : null}
+        {activeScreen === 'student-tuition-payment' ? (
+          <StudentTuitionPaymentScreen
+            onBack={() => setActiveScreen('student-settings')}
+            onPaymentSuccess={handleTuitionPaymentSuccess}
+          />
+        ) : null}
+        {activeScreen === 'student-profile' ? (
+          <StudentProfileScreen
+            data={studentProfile}
+            onBack={() => setActiveScreen('student-settings')}
+            onOpenEdit={() => setActiveScreen('student-edit-profile')}
+          />
+        ) : null}
+        {activeScreen === 'student-edit-profile' ? (
+          <StudentEditProfileScreen
+            data={studentProfile}
+            onBack={() => setActiveScreen('student-profile')}
+            onChange={updateStudentProfile}
+            onSave={() => setActiveScreen('student-profile')}
+          />
+        ) : null}
+        {activeScreen === 'student-exam-schedule' ? (
+          <StudentExamScheduleScreen onBack={() => setActiveScreen('student-dashboard')} />
+        ) : null}
+        {activeScreen === 'student-leave-request' ? (
+          <StudentLeaveRequestScreen
+            draft={leaveDraft}
+            onBack={() => setActiveScreen('student-dashboard')}
+            onChangeField={updateLeaveField}
+            onChangeReason={updateLeaveReason}
+            onPreview={() => setActiveScreen('student-leave-request-preview')}
+          />
+        ) : null}
+        {activeScreen === 'student-leave-request-preview' ? (
+          <StudentLeaveRequestPreviewScreen
+            draft={leaveDraft}
+            onBack={() => setActiveScreen('student-leave-request')}
+            profile={studentProfile}
+          />
+        ) : null}
+      </SafeAreaView>
     </SafeAreaProvider>
   );
 }
 
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
-
-  return (
-    <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
-      />
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
+    backgroundColor: '#FFFFFF',
   },
 });
 
