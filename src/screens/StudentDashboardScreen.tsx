@@ -1,7 +1,14 @@
-﻿import React from 'react';
-import {Pressable, ScrollView, StyleSheet, Text, View} from 'react-native';
-import {AppFooter} from '../components/AppFooter';
-import {HighSchoolHubLogo} from '../components/HighSchoolHubLogo';
+import React from 'react';
+import {
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import { AppFooter } from '../components/AppFooter';
+import { StudentBottomNav } from '../components/StudentBottomNav';
 import {
   classmates,
   studentDashboardShortcuts,
@@ -20,6 +27,7 @@ import type {
 type Props = {
   onOpenAttendance: () => void;
   onOpenExamSchedule: () => void;
+  onOpenForum: () => void;
   onOpenLeaveRequest: () => void;
   onOpenNotifications: () => void;
   onOpenProfile: () => void;
@@ -27,9 +35,42 @@ type Props = {
   onOpenSearch: () => void;
 };
 
+const assets = {
+  attendanceBase: require('../assets/dashboard/student/icons/attendance_base.png'),
+  attendanceDot: require('../assets/dashboard/student/icons/attendance_dot.png'),
+  attendanceLine: require('../assets/dashboard/student/icons/attendance_midline.png'),
+  attendanceTop: require('../assets/dashboard/student/icons/attendance_top.png'),
+  chat: require('../assets/dashboard/student/icons/chat.png'),
+  exam: require('../assets/dashboard/student/icons/exam.png'),
+  footerLogo: require('../assets/dashboard/student/images/footer_logo.png'),
+  forumInner: require('../assets/dashboard/student/icons/forum_inner.png'),
+  forumOuter: require('../assets/dashboard/student/icons/forum_outer.png'),
+  homeworkBase: require('../assets/dashboard/student/icons/homework_base.png'),
+  homeworkLine: require('../assets/dashboard/student/icons/homework_line.png'),
+  news1: require('../assets/dashboard/student/images/news_1.png'),
+  news2: require('../assets/dashboard/student/images/news_2.png'),
+  news3: require('../assets/dashboard/student/images/news_3.png'),
+  notify: require('../assets/dashboard/student/icons/notify.png'),
+  notifyBg: require('../assets/dashboard/student/images/notify_bg.png'),
+  profileAvatar: require('../assets/dashboard/student/images/profile_avatar.png'),
+  quoteBg: require('../assets/dashboard/student/images/quote_bg.png'),
+  quoteBar: require('../assets/dashboard/student/images/quote_bar.png'),
+  reload: require('../assets/dashboard/student/icons/reload.png'),
+  scan: require('../assets/dashboard/student/icons/scan.png'),
+  scheduleBase: require('../assets/dashboard/student/icons/schedule_base.png'),
+  scheduleDot: require('../assets/dashboard/student/icons/schedule_dot.png'),
+  scheduleMid: require('../assets/dashboard/student/icons/schedule_mid.png'),
+  scheduleTopDot: require('../assets/dashboard/student/icons/schedule_topdot.png'),
+  search: require('../assets/dashboard/student/icons/search.png'),
+  searchBg: require('../assets/dashboard/student/images/search_bg.png'),
+  student1: require('../assets/dashboard/student/images/student_1.png'),
+  student3: require('../assets/dashboard/student/images/student_3.png'),
+};
+
 export function StudentDashboardScreen({
   onOpenAttendance,
   onOpenExamSchedule,
+  onOpenForum,
   onOpenLeaveRequest,
   onOpenNotifications,
   onOpenProfile,
@@ -38,193 +79,246 @@ export function StudentDashboardScreen({
 }: Props) {
   return (
     <View style={styles.screen}>
-      <ScrollView
-        bounces={false}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}>
-        <View style={styles.content}>
-          <View style={styles.topRow}>
-            <View style={styles.profileRow}>
-              <View style={styles.avatar}>
-                <Text style={styles.avatarText}>ML</Text>
-              </View>
-              <View>
-                <Text style={styles.profileName}>{studentProfile.name}</Text>
-                <Text style={styles.profileClass}>{studentProfile.className}</Text>
-              </View>
-            </View>
-
-            <View style={styles.searchWrap}>
-              <Pressable onPress={onOpenSearch} style={styles.searchBox}>
-                <Text style={styles.searchIcon}>⌕</Text>
-                <Text style={styles.searchText}>Tìm Kiếm</Text>
-              </Pressable>
-              <Pressable onPress={onOpenNotifications} style={styles.bellCircle}>
-                <Text style={styles.bellIcon}>🔔</Text>
-              </Pressable>
-            </View>
+      <ScrollView bounces={false} contentContainerStyle={styles.scrollContent}>
+        <View style={styles.topRow}>
+          <Image source={assets.profileAvatar} style={styles.profileAvatar} />
+          <View style={styles.profileBody}>
+            <Text style={styles.profileName}>{studentProfile.name}</Text>
+            <Text style={styles.profileClass}>{studentProfile.className}</Text>
           </View>
 
-          <View style={styles.shortcutGrid}>
-            {studentDashboardShortcuts.map(item => (
-              <ShortcutCard
-                item={item}
-                key={item.id}
-                onPress={
-                  item.id === 'attendance'
-                    ? onOpenAttendance
-                    : item.id === 'schedule'
-                      ? onOpenSchedule
-                      : item.id === 'exam'
-                        ? onOpenExamSchedule
+          <Pressable onPress={onOpenSearch} style={styles.searchWrap}>
+            <Image source={assets.searchBg} style={styles.searchBg} />
+            <Image source={assets.search} style={styles.searchIcon} />
+            <Text style={styles.searchText}>Tìm Kiếm</Text>
+          </Pressable>
+
+          <Pressable onPress={onOpenNotifications} style={styles.notifyWrap}>
+            <Image source={assets.notifyBg} style={styles.notifyBg} />
+            <Image source={assets.notify} style={styles.notifyIcon} />
+          </Pressable>
+        </View>
+
+        <View style={styles.shortcutGrid}>
+          {studentDashboardShortcuts.map(item => (
+            <ShortcutCard
+              item={item}
+              key={item.id}
+              onPress={
+                item.id === 'attendance'
+                  ? onOpenAttendance
+                  : item.id === 'schedule'
+                    ? onOpenSchedule
+                    : item.id === 'exam'
+                      ? onOpenExamSchedule
+                      : item.id === 'forum'
+                        ? onOpenForum
                         : item.id === 'leave'
                           ? onOpenLeaveRequest
                           : undefined
-                }
-              />
-            ))}
-          </View>
+              }
+            />
+          ))}
+        </View>
 
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Lịch học hôm nay</Text>
-            <View style={styles.datePill}>
-              <Text style={styles.datePillText}>Thứ Tư, 15/05</Text>
-            </View>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Lịch học hôm nay</Text>
+          <View style={styles.datePill}>
+            <Text style={styles.datePillText}>Thứ Tư, 15/05</Text>
           </View>
+        </View>
 
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.lessonScroller}
-            contentContainerStyle={styles.lessonScrollerContent}>
-            {studentTodayLessons.map(item => (
-              <LessonCard item={item} key={item.id} />
-            ))}
-          </ScrollView>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.lessonRow}
+        >
+          {studentTodayLessons.map(item => (
+            <LessonCard item={item} key={item.id} />
+          ))}
+        </ScrollView>
 
-          <View style={styles.quoteCard}>
-            <View style={styles.quoteBar} />
-            <View style={styles.quoteContent}>
-              <Text style={styles.quoteText}>{studentQuote.text}</Text>
-              <View style={styles.quoteFooter}>
-                <Text style={styles.quoteRefresh}>⟳</Text>
-                <Text style={styles.quoteAuthor}>{studentQuote.author}</Text>
-              </View>
-            </View>
-          </View>
+        <View style={styles.quoteCard}>
+          <Image source={assets.quoteBg} style={styles.quoteBg} />
+          <Image source={assets.quoteBar} style={styles.quoteBar} />
+          <Text style={styles.quoteText}>{studentQuote.text}</Text>
+          <Image source={assets.reload} style={styles.reloadIcon} />
+          <Text style={styles.quoteAuthor}>{studentQuote.author}</Text>
+        </View>
 
-          <Text style={styles.sectionTitle}>Bạn học nổi bật</Text>
-          <View style={styles.studentsRow}>
-            {classmates.map(item => (
-              <StudentCard item={item} key={item.id} />
-            ))}
-          </View>
+        <Text style={styles.sectionTitle}>Top học sinh nổi bật</Text>
+        <View style={styles.studentRow}>
+          <TopStudentCard image={assets.student1} item={classmates[0]} />
+          <TopStudentCard image={assets.student3} item={classmates[1]} />
+        </View>
 
-          <Text style={styles.sectionTitle}>Tin tức - Sự kiện</Text>
-          <View style={styles.newsList}>
-            {studentNews.map(item => (
-              <NewsCard item={item} key={item.id} />
-            ))}
-          </View>
+        <Text style={styles.sectionTitle}>Tin tức - Sự kiện</Text>
+        <View style={styles.newsList}>
+          {studentNews.map((item, index) => (
+            <NewsCard
+              item={item}
+              key={item.id}
+              thumb={
+                index === 0
+                  ? assets.news1
+                  : index === 1
+                    ? assets.news2
+                    : assets.news3
+              }
+            />
+          ))}
+        </View>
 
-          <View style={styles.logoFooterWrap}>
-            <View style={styles.logoScaleWrap}>
-              <HighSchoolHubLogo />
-            </View>
-            <AppFooter />
-          </View>
+        <View style={styles.footerArea}>
+          <Image source={assets.footerLogo} style={styles.footerLogo} />
+          <AppFooter />
         </View>
       </ScrollView>
 
-      <View style={styles.bottomNav}>
-        <NavItem active icon="◔" label="Trang chủ" />
-        <NavItem icon="📖" label="Lớp học" />
-        <View style={styles.centerNav}>
-          <Text style={styles.centerNavIcon}>👜</Text>
-        </View>
-        <NavItem icon="💬" label="Trò chuyện" />
-        <NavItem icon="👥" label="Cá nhân" onPress={onOpenProfile} />
-      </View>
+      <StudentBottomNav onOpenProfile={onOpenProfile} />
     </View>
   );
 }
 
-type ShortcutCardProps = {
+function ShortcutCard({
+  item,
+  onPress,
+}: {
   item: DashboardShortcut;
   onPress?: () => void;
-};
-
-function ShortcutCard({item, onPress}: ShortcutCardProps) {
+}) {
   return (
     <Pressable onPress={onPress} style={styles.shortcutItem}>
-      <View style={[styles.shortcutCircle, {backgroundColor: item.tint}]}>
-        <Text style={[styles.shortcutIcon, {color: item.iconColor}]}>{item.icon}</Text>
+      <View style={[styles.shortcutCircle, { backgroundColor: item.tint }]}>
+        <ShortcutIcon id={item.id} />
       </View>
       <Text style={styles.shortcutLabel}>{item.label}</Text>
     </Pressable>
   );
 }
 
-type LessonCardProps = {
-  item: DashboardLesson;
-};
+function ShortcutIcon({ id }: { id: string }) {
+  if (id === 'homework') {
+    return (
+      <View style={styles.homeworkWrap}>
+        <Image source={assets.homeworkBase} style={styles.homeworkBase} />
+        <Image source={assets.homeworkLine} style={styles.homeworkLine} />
+      </View>
+    );
+  }
+  if (id === 'schedule') {
+    return (
+      <View style={styles.scheduleWrap}>
+        <Image source={assets.scheduleBase} style={styles.scheduleBase} />
+        <Image source={assets.scheduleMid} style={styles.scheduleMid} />
+        <Image source={assets.scheduleTopDot} style={styles.scheduleTopDot1} />
+        <Image source={assets.scheduleTopDot} style={styles.scheduleTopDot2} />
+        <Image source={assets.scheduleDot} style={styles.scheduleDot1} />
+        <Image source={assets.scheduleDot} style={styles.scheduleDot2} />
+        <Image source={assets.scheduleDot} style={styles.scheduleDot3} />
+        <Image source={assets.scheduleDot} style={styles.scheduleDot4} />
+        <Image source={assets.scheduleDot} style={styles.scheduleDot5} />
+        <Image source={assets.scheduleDot} style={styles.scheduleDot6} />
+      </View>
+    );
+  }
+  if (id === 'exam') {
+    return <Image source={assets.exam} style={styles.examIcon} />;
+  }
+  if (id === 'forum') {
+    return (
+      <View style={styles.forumWrap}>
+        <Image source={assets.forumOuter} style={styles.forumOuter} />
+        <Image source={assets.forumInner} style={styles.forumInner} />
+      </View>
+    );
+  }
+  if (id === 'attendance') {
+    return (
+      <View style={styles.attendanceWrap}>
+        <Image source={assets.attendanceBase} style={styles.attendanceBase} />
+        <Image source={assets.attendanceTop} style={styles.attendanceTop} />
+        <Image source={assets.attendanceLine} style={styles.attendanceLine1} />
+        <Image source={assets.attendanceLine} style={styles.attendanceLine2} />
+        <Image source={assets.attendanceDot} style={styles.attendanceDot1} />
+        <Image source={assets.attendanceDot} style={styles.attendanceDot2} />
+      </View>
+    );
+  }
+  return (
+    <Text style={styles.shortcutFallback}>
+      {id === 'leave' ? '✒' : id === 'score' ? '◔' : '▦'}
+    </Text>
+  );
+}
 
-function LessonCard({item}: LessonCardProps) {
+function LessonCard({ item }: { item: DashboardLesson }) {
   const isActive = item.status != null;
-
   return (
     <View
-      style={[
-        styles.lessonCard,
-        {backgroundColor: item.tint},
-        isActive ? styles.lessonCardActive : null,
-      ]}>
-      <View style={styles.lessonHeader}>
-        <Text style={[styles.lessonPeriod, isActive ? styles.lessonPeriodActive : null]}>
-          {item.period}
-        </Text>
-        {item.status ? <Text style={styles.lessonStatus}>● {item.status}</Text> : null}
+      style={[styles.lessonCard, isActive ? styles.lessonCardActive : null]}
+    >
+      <View style={styles.lessonTop}>
+        <View
+          style={[
+            styles.lessonPeriodPill,
+            isActive ? styles.lessonPeriodPillActive : null,
+          ]}
+        >
+          <Text
+            style={[
+              styles.lessonPeriodText,
+              isActive ? styles.lessonPeriodTextActive : null,
+            ]}
+          >
+            {item.period}
+          </Text>
+        </View>
+        {item.status ? (
+          <Text style={styles.lessonStatus}>● Đang học</Text>
+        ) : null}
       </View>
-      <Text style={[styles.lessonSubject, isActive ? styles.lessonSubjectActive : null]}>
+      <Text
+        style={[
+          styles.lessonSubject,
+          isActive ? styles.lessonSubjectActive : null,
+        ]}
+      >
         {item.subject}
       </Text>
-      <Text style={[styles.lessonRoom, isActive ? styles.lessonRoomActive : null]}>
+      <Text
+        style={[styles.lessonRoom, isActive ? styles.lessonRoomActive : null]}
+      >
         📍 {item.room}
       </Text>
     </View>
   );
 }
 
-type StudentCardProps = {
+function TopStudentCard({
+  image,
+  item,
+}: {
+  image: number;
   item: HighlightStudent;
-};
-
-function StudentCard({item}: StudentCardProps) {
+}) {
   return (
     <View style={styles.studentCard}>
-      <View style={[styles.studentImage, {backgroundColor: item.tint}]}>
-        <View style={styles.studentPortrait}>
-          <Text style={styles.studentPortraitText}>{item.name.slice(0, 2)}</Text>
-        </View>
-      </View>
+      <Image source={image} style={styles.studentImage} />
       <View style={styles.studentBody}>
-        <Text style={styles.studentName}>{item.name}</Text>
+        <Text numberOfLines={1} style={styles.studentName}>
+          {item.name}
+        </Text>
         <Text style={styles.studentClass}>{item.className}</Text>
       </View>
     </View>
   );
 }
 
-type NewsCardProps = {
-  item: NewsItem;
-};
-
-function NewsCard({item}: NewsCardProps) {
+function NewsCard({ item, thumb }: { item: NewsItem; thumb: number }) {
   return (
     <View style={styles.newsCard}>
-      <View style={[styles.newsThumb, {backgroundColor: item.tint}]}>
-        <Text style={styles.newsThumbText}>HSH</Text>
-      </View>
+      <Image source={thumb} style={styles.newsThumb} />
       <View style={styles.newsBody}>
         <Text style={styles.newsTitle}>{item.title}</Text>
         <Text style={styles.newsDate}>{item.dateTime}</Text>
@@ -233,397 +327,347 @@ function NewsCard({item}: NewsCardProps) {
   );
 }
 
-type NavItemProps = {
-  active?: boolean;
-  icon: string;
-  label: string;
-  onPress?: () => void;
-};
-
-function NavItem({active = false, icon, label, onPress}: NavItemProps) {
-  return (
-    <Pressable onPress={onPress} style={styles.navItem}>
-      <Text style={[styles.navIcon, active ? styles.navIconActive : null]}>{icon}</Text>
-      <Text style={[styles.navLabel, active ? styles.navLabelActive : null]}>{label}</Text>
-    </Pressable>
-  );
-}
-
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  scrollContent: {
-    paddingBottom: 112,
-  },
-  content: {
-    paddingHorizontal: 16,
-    paddingTop: 14,
-  },
-  topRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  profileRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    flex: 1,
-    paddingRight: 10,
-  },
-  avatar: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: '#1D1D1D',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '800',
-  },
-  profileName: {
-    color: '#141414',
-    fontSize: 15,
-    fontWeight: '900',
-  },
+  screen: { flex: 1, backgroundColor: '#F4F4F5' },
+  scrollContent: { paddingHorizontal: 20, paddingTop: 10, paddingBottom: 120 },
+  topRow: { height: 54, flexDirection: 'row', alignItems: 'center' },
+  profileAvatar: { width: 40, height: 40, borderRadius: 20 },
+  profileBody: { marginLeft: 12, flex: 1 },
+  profileName: { fontSize: 15, fontWeight: '700', color: '#111111' },
   profileClass: {
-    color: '#8B8B8B',
-    fontSize: 12,
+    marginTop: 2,
+    fontSize: 10,
+    color: '#8E8E8E',
     fontStyle: 'italic',
-    marginTop: 3,
   },
   searchWrap: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  searchBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    width: 110,
     height: 38,
-    width: 112,
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: '#EEF2F6',
-    paddingHorizontal: 10,
-    backgroundColor: '#FFFFFF',
+    marginRight: 10,
+    justifyContent: 'center',
+  },
+  searchBg: {
+    position: 'absolute',
+    width: 110,
+    height: 38,
+    resizeMode: 'stretch',
   },
   searchIcon: {
-    color: '#62BCD9',
-    fontSize: 19,
-    marginRight: 6,
+    position: 'absolute',
+    width: 15.3,
+    height: 15.3,
+    left: 12,
+    top: 11.5,
   },
-  searchText: {
-    color: '#A2A9B2',
-    fontSize: 13,
+  searchText: { marginLeft: 34, color: '#A4A7AD', fontSize: 12 },
+  notifyWrap: { width: 38, height: 38 },
+  notifyBg: { position: 'absolute', width: 38, height: 38 },
+  notifyIcon: {
+    position: 'absolute',
+    width: 16.4,
+    height: 20,
+    left: 11,
+    top: 9,
   },
-  bellCircle: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    borderWidth: 1,
-    borderColor: '#EEF2F6',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#FFFFFF',
-  },
-  bellIcon: {
-    fontSize: 16,
-  },
+
   shortcutGrid: {
+    marginTop: 24,
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginTop: 22,
-    rowGap: 20,
+    rowGap: 24,
   },
-  shortcutItem: {
-    width: '24%',
-    alignItems: 'center',
-  },
+  shortcutItem: { width: 72, alignItems: 'center' },
   shortcutCircle: {
-    width: 76,
-    height: 76,
+    width: 64,
+    height: 64,
     borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  shortcutIcon: {
-    fontSize: 28,
-  },
   shortcutLabel: {
-    marginTop: 8,
-    color: '#222222',
-    fontSize: 13,
-    fontWeight: '500',
+    marginTop: 10,
+    fontSize: 14,
+    color: '#161616',
     textAlign: 'center',
   },
+  shortcutFallback: { fontSize: 22, color: '#5E6B7A' },
+  homeworkWrap: { width: 26, height: 26 },
+  homeworkBase: {
+    position: 'absolute',
+    width: 21.7,
+    height: 19.5,
+    left: 2.2,
+    top: 3.3,
+  },
+  homeworkLine: {
+    position: 'absolute',
+    width: 1,
+    height: 15.2,
+    left: 13,
+    top: 7.6,
+  },
+  scheduleWrap: { width: 28, height: 28 },
+  scheduleBase: {
+    position: 'absolute',
+    width: 21,
+    height: 21,
+    left: 3.5,
+    top: 4.7,
+  },
+  scheduleMid: {
+    position: 'absolute',
+    width: 21,
+    height: 1,
+    left: 3.5,
+    top: 11.7,
+  },
+  scheduleTopDot1: {
+    position: 'absolute',
+    width: 1,
+    height: 4.7,
+    left: 9.3,
+    top: 2.3,
+  },
+  scheduleTopDot2: {
+    position: 'absolute',
+    width: 1,
+    height: 4.7,
+    left: 18.7,
+    top: 2.3,
+  },
+  scheduleDot1: {
+    position: 'absolute',
+    width: 1,
+    height: 1,
+    left: 7,
+    top: 12.8,
+  },
+  scheduleDot2: {
+    position: 'absolute',
+    width: 1,
+    height: 1,
+    left: 11.7,
+    top: 12.8,
+  },
+  scheduleDot3: {
+    position: 'absolute',
+    width: 1,
+    height: 1,
+    left: 16.4,
+    top: 12.8,
+  },
+  scheduleDot4: {
+    position: 'absolute',
+    width: 1,
+    height: 1,
+    left: 7,
+    top: 17.4,
+  },
+  scheduleDot5: {
+    position: 'absolute',
+    width: 1,
+    height: 1,
+    left: 11.7,
+    top: 17.4,
+  },
+  scheduleDot6: {
+    position: 'absolute',
+    width: 1,
+    height: 1,
+    left: 16.4,
+    top: 17.4,
+  },
+  examIcon: { width: 21, height: 23.3 },
+  forumWrap: { width: 26, height: 26 },
+  forumOuter: {
+    position: 'absolute',
+    width: 19.5,
+    height: 19.5,
+    left: 4.9,
+    top: 4.9,
+  },
+  forumInner: {
+    position: 'absolute',
+    width: 13,
+    height: 13,
+    left: 1.6,
+    top: 1.6,
+  },
+  attendanceWrap: { width: 29, height: 29 },
+  attendanceBase: {
+    position: 'absolute',
+    width: 19.3,
+    height: 21.8,
+    left: 4.8,
+    top: 4.8,
+  },
+  attendanceTop: {
+    position: 'absolute',
+    width: 9.7,
+    height: 4.8,
+    left: 9.7,
+    top: 2.4,
+  },
+  attendanceLine1: {
+    position: 'absolute',
+    width: 4.8,
+    height: 1,
+    left: 14.5,
+    top: 13.3,
+  },
+  attendanceLine2: {
+    position: 'absolute',
+    width: 4.8,
+    height: 1,
+    left: 14.5,
+    top: 19.3,
+  },
+  attendanceDot1: {
+    position: 'absolute',
+    width: 1,
+    height: 1,
+    left: 9.7,
+    top: 13.3,
+  },
+  attendanceDot2: {
+    position: 'absolute',
+    width: 1,
+    height: 1,
+    left: 9.7,
+    top: 19.3,
+  },
+
   sectionHeader: {
+    marginTop: 20,
+    marginBottom: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 20,
-    marginBottom: 12,
   },
   sectionTitle: {
-    color: '#111111',
-    fontSize: 18,
-    fontWeight: '900',
-    marginTop: 16,
+    fontSize: 21,
+    fontWeight: '700',
+    color: '#131A28',
+    marginTop: 20,
     marginBottom: 12,
   },
   datePill: {
     minWidth: 112,
     height: 28,
-    borderRadius: 8,
-    backgroundColor: '#F0FAFD',
+    borderRadius: 5,
+    backgroundColor: '#E8F4F8',
     alignItems: 'center',
     justifyContent: 'center',
+    paddingHorizontal: 10,
   },
-  datePillText: {
-    color: '#82C8DD',
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  lessonScroller: {
-    marginHorizontal: -16,
-  },
-  lessonScrollerContent: {
-    paddingHorizontal: 16,
-    gap: 10,
-  },
+  datePillText: { fontSize: 12, color: '#63BAD5', fontWeight: '500' },
+  lessonRow: { gap: 8, paddingBottom: 4 },
   lessonCard: {
-    width: 138,
-    minHeight: 114,
-    borderRadius: 18,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+    width: 162,
+    minHeight: 124,
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#EFF2F5',
+    borderColor: '#EBEEF2',
+    paddingHorizontal: 14,
+    paddingTop: 12,
+    paddingBottom: 10,
+    backgroundColor: '#FFFFFF',
   },
-  lessonCardActive: {
-    borderColor: '#67BCDB',
-  },
-  lessonHeader: {
+  lessonCardActive: { backgroundColor: '#63BAD5', borderColor: '#63BAD5' },
+  lessonTop: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 10,
+    alignItems: 'center',
   },
-  lessonPeriod: {
-    color: '#A7B0BC',
-    fontSize: 11,
-    fontWeight: '700',
-    backgroundColor: '#F4FBFE',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+  lessonPeriodPill: {
+    height: 28,
+    minWidth: 54,
     borderRadius: 8,
-    overflow: 'hidden',
-  },
-  lessonPeriodActive: {
-    color: '#FFFFFF',
-    backgroundColor: 'rgba(255,255,255,0.22)',
-  },
-  lessonStatus: {
-    color: '#FFFFFF',
-    fontSize: 11,
-    fontWeight: '700',
-  },
-  lessonSubject: {
-    color: '#242424',
-    fontSize: 15,
-    fontWeight: '900',
-  },
-  lessonSubjectActive: {
-    color: '#FFFFFF',
-  },
-  lessonRoom: {
-    color: '#858B94',
-    fontSize: 12,
-    marginTop: 8,
-  },
-  lessonRoomActive: {
-    color: '#E8F7FD',
-  },
-  quoteCard: {
-    marginTop: 16,
-    flexDirection: 'row',
-    borderRadius: 22,
-    backgroundColor: '#ECF7FB',
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-    alignItems: 'stretch',
-  },
-  quoteBar: {
-    width: 4,
-    borderRadius: 3,
-    backgroundColor: '#69BFDE',
-    marginRight: 14,
-  },
-  quoteContent: {
-    flex: 1,
-  },
-  quoteText: {
-    color: '#1F1F1F',
-    fontSize: 14,
-    lineHeight: 24,
-    fontWeight: '500',
-  },
-  quoteFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    backgroundColor: '#F2F7FA',
     alignItems: 'center',
-    marginTop: 8,
+    justifyContent: 'center',
+    paddingHorizontal: 8,
   },
-  quoteRefresh: {
-    color: '#69BFDE',
-    fontSize: 24,
+  lessonPeriodPillActive: { backgroundColor: 'rgba(255,255,255,0.22)' },
+  lessonPeriodText: { fontSize: 14, color: '#9EA7B3', fontWeight: '700' },
+  lessonPeriodTextActive: { color: '#FFFFFF' },
+  lessonStatus: { fontSize: 12, color: '#FFFFFF', fontWeight: '700' },
+  lessonSubject: {
+    marginTop: 10,
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#1E2734',
+  },
+  lessonSubjectActive: { color: '#FFFFFF' },
+  lessonRoom: { marginTop: 8, fontSize: 15, color: '#7D838D' },
+  lessonRoomActive: { color: '#E7F7FD' },
+
+  quoteCard: {
+    height: 106,
+    marginTop: 16,
+    borderRadius: 20,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+  },
+  quoteBg: { position: 'absolute', width: '100%', height: '100%' },
+  quoteBar: { position: 'absolute', left: 14, top: 11, width: 4, height: 83 },
+  quoteText: {
+    marginLeft: 18,
+    marginRight: 44,
+    fontSize: 16,
+    lineHeight: 20,
+    color: '#000000',
+  },
+  reloadIcon: {
+    position: 'absolute',
+    right: 18,
+    top: 40,
+    width: 22.4,
+    height: 19.5,
   },
   quoteAuthor: {
-    color: '#989898',
-    fontSize: 14,
-    fontWeight: '800',
+    position: 'absolute',
+    right: 18,
+    bottom: 16,
+    fontSize: 17,
+    color: '#838383',
+    fontWeight: '700',
   },
-  studentsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 12,
-  },
+
+  studentRow: { flexDirection: 'row', gap: 12 },
   studentCard: {
     flex: 1,
-    borderRadius: 14,
+    borderRadius: 12,
     overflow: 'hidden',
     backgroundColor: '#FFFFFF',
   },
-  studentImage: {
-    height: 122,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  studentPortrait: {
-    width: 68,
-    height: 90,
-    borderRadius: 34,
-    backgroundColor: 'rgba(255,255,255,0.45)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  studentPortraitText: {
-    color: '#5A4E22',
-    fontSize: 20,
-    fontWeight: '900',
-  },
-  studentBody: {
-    paddingHorizontal: 10,
-    paddingVertical: 9,
-  },
-  studentName: {
-    color: '#242424',
-    fontSize: 15,
-    fontWeight: '500',
-  },
-  studentClass: {
-    color: '#878787',
-    fontSize: 12,
-    marginTop: 4,
-  },
-  newsList: {
-    gap: 12,
-  },
+  studentImage: { width: '100%', height: 167, resizeMode: 'cover' },
+  studentBody: { paddingHorizontal: 12, paddingVertical: 8 },
+  studentName: { fontSize: 17, color: '#1F1F1F' },
+  studentClass: { marginTop: 4, fontSize: 15, color: '#6E737B' },
+
+  newsList: { gap: 12 },
   newsCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 12,
-    borderRadius: 18,
+    borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#E8E8E8',
-    backgroundColor: '#FFFFFF',
-  },
-  newsThumb: {
-    width: 82,
-    height: 82,
-    borderRadius: 22,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 14,
-  },
-  newsThumbText: {
-    color: '#8E7B35',
-    fontSize: 17,
-    fontWeight: '900',
-  },
-  newsBody: {
-    flex: 1,
-  },
-  newsTitle: {
-    color: '#181818',
-    fontSize: 14,
-    lineHeight: 22,
-    fontWeight: '700',
-  },
-  newsDate: {
-    color: '#777777',
-    fontSize: 12,
-    marginTop: 6,
-  },
-  logoFooterWrap: {
-    alignItems: 'center',
-    marginTop: 18,
-  },
-  logoScaleWrap: {
-    transform: [{scale: 0.4}],
-    marginBottom: -24,
-  },
-  bottomNav: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    height: 86,
-    borderTopWidth: 1,
-    borderTopColor: '#EDF0F4',
-    backgroundColor: '#FFFFFF',
+    borderColor: '#D9D9D9',
+    backgroundColor: 'rgba(255,255,255,0.45)',
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    paddingHorizontal: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 16,
   },
-  navItem: {
-    width: 62,
-    alignItems: 'center',
+  newsThumb: { width: 80, height: 80, borderRadius: 20, marginRight: 14 },
+  newsBody: { flex: 1, justifyContent: 'space-between' },
+  newsTitle: {
+    fontSize: 19,
+    lineHeight: 22,
+    fontWeight: '500',
+    color: '#000000',
   },
-  navIcon: {
-    color: '#D0D4DC',
-    fontSize: 24,
-  },
-  navIconActive: {
-    color: '#69BFDE',
-  },
-  navLabel: {
-    color: '#C6CAD1',
-    fontSize: 11,
-    marginTop: 5,
-  },
-  navLabelActive: {
-    color: '#69BFDE',
-    fontWeight: '700',
-  },
-  centerNav: {
-    width: 58,
-    height: 58,
-    borderRadius: 29,
-    backgroundColor: '#69BFDE',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: -18,
-  },
-  centerNavIcon: {
-    color: '#FFFFFF',
-    fontSize: 24,
-  },
+  newsDate: { fontSize: 14, color: '#666B74' },
+
+  footerArea: { marginTop: 30, alignItems: 'center' },
+  footerLogo: { width: 87, height: 75, marginBottom: 6 },
 });

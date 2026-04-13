@@ -11,7 +11,13 @@ export const studentProfile = {
 };
 
 export const studentDashboardShortcuts: DashboardShortcut[] = [
-  {id: 'homework', icon: '📖', iconColor: '#117F78', label: 'Bài tập', tint: '#CDF8ED'},
+  {
+    id: 'homework',
+    icon: '📖',
+    iconColor: '#117F78',
+    label: 'Bài tập',
+    tint: '#CDF8ED',
+  },
   {
     id: 'schedule',
     icon: '🗓',
@@ -19,12 +25,48 @@ export const studentDashboardShortcuts: DashboardShortcut[] = [
     label: 'Thời khóa biểu',
     tint: '#DAEFFD',
   },
-  {id: 'score', icon: '◔', iconColor: '#C68A00', label: 'Điểm số', tint: '#FFF3B8'},
-  {id: 'exam', icon: '📅', iconColor: '#B77E00', label: 'Lịch thi', tint: '#FFF6C9'},
-  {id: 'leave', icon: '✒', iconColor: '#E02A8A', label: 'Xin nghỉ', tint: '#FCE2F2'},
-  {id: 'forum', icon: '💬', iconColor: '#1490D2', label: 'Diễn đàn', tint: '#DDF2FF'},
-  {id: 'attendance', icon: '📋', iconColor: '#17A048', label: 'Chuyên cần', tint: '#D7F9E5'},
-  {id: 'all', icon: '▦', iconColor: '#74BFE5', label: 'Tất cả', tint: '#DDF2FF'},
+  {
+    id: 'score',
+    icon: '◔',
+    iconColor: '#C68A00',
+    label: 'Điểm số',
+    tint: '#FFF3B8',
+  },
+  {
+    id: 'exam',
+    icon: '📅',
+    iconColor: '#B77E00',
+    label: 'Lịch thi',
+    tint: '#FFF6C9',
+  },
+  {
+    id: 'leave',
+    icon: '✒',
+    iconColor: '#E02A8A',
+    label: 'Xin phép',
+    tint: '#FCE2F2',
+  },
+  {
+    id: 'forum',
+    icon: '💬',
+    iconColor: '#1490D2',
+    label: 'Diễn đàn',
+    tint: '#DDF2FF',
+  },
+  {
+    id: 'attendance',
+    icon: '📋',
+    iconColor: '#17A048',
+    label: 'Chuyên cần',
+    tint: '#D7F9E5',
+  },
+  {
+    id: 'all',
+    icon: '▦',
+    iconColor: '#74BFE5',
+    label: 'Tất cả',
+    tint: '#DDF2FF',
+  },
 ];
 
 export const studentTodayLessons: DashboardLesson[] = [
@@ -83,7 +125,8 @@ export const studentNews: NewsItem[] = [
   {
     id: 'news-3',
     dateTime: '14:36, 28/09/2025',
-    title: 'Kế hoạch tổ chức Hội trại truyền thống "Tri Ân Người Lái Đò" năm học 2024-2025',
+    title:
+      'Kế hoạch tổ chức Hội trại truyền thống "Tri Ân Người Lái Đò" năm học 2024-2025',
     tint: '#ECE7DB',
   },
 ];
