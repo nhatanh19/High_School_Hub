@@ -26,16 +26,20 @@ import type {
 
 type Props = {
   onOpenAttendance: () => void;
+  onOpenAllFeatures: () => void;
   onOpenExamSchedule: () => void;
   onOpenForum: () => void;
+  onOpenHomework: () => void;
   onOpenLeaveRequest: () => void;
   onOpenNotifications: () => void;
   onOpenProfile: () => void;
+  onOpenScore: () => void;
   onOpenSchedule: () => void;
   onOpenSearch: () => void;
 };
 
 const assets = {
+  all: require('../assets/dashboard/student/icons/all.png'),
   attendanceBase: require('../assets/dashboard/student/icons/attendance_base.png'),
   attendanceDot: require('../assets/dashboard/student/icons/attendance_dot.png'),
   attendanceLine: require('../assets/dashboard/student/icons/attendance_midline.png'),
@@ -47,6 +51,7 @@ const assets = {
   forumOuter: require('../assets/dashboard/student/icons/forum_outer.png'),
   homeworkBase: require('../assets/dashboard/student/icons/homework_base.png'),
   homeworkLine: require('../assets/dashboard/student/icons/homework_line.png'),
+  leave: require('../assets/dashboard/student/icons/leave.png'),
   news1: require('../assets/dashboard/student/images/news_1.png'),
   news2: require('../assets/dashboard/student/images/news_2.png'),
   news3: require('../assets/dashboard/student/images/news_3.png'),
@@ -61,6 +66,7 @@ const assets = {
   scheduleDot: require('../assets/dashboard/student/icons/schedule_dot.png'),
   scheduleMid: require('../assets/dashboard/student/icons/schedule_mid.png'),
   scheduleTopDot: require('../assets/dashboard/student/icons/schedule_topdot.png'),
+  score: require('../assets/dashboard/student/icons/score.png'),
   search: require('../assets/dashboard/student/icons/search.png'),
   searchBg: require('../assets/dashboard/student/images/search_bg.png'),
   student1: require('../assets/dashboard/student/images/student_1.png'),
@@ -69,14 +75,49 @@ const assets = {
 
 export function StudentDashboardScreen({
   onOpenAttendance,
+  onOpenAllFeatures,
   onOpenExamSchedule,
   onOpenForum,
+  onOpenHomework,
   onOpenLeaveRequest,
   onOpenNotifications,
   onOpenProfile,
+  onOpenScore,
   onOpenSchedule,
   onOpenSearch,
 }: Props) {
+  const shortcutFirstRow = studentDashboardShortcuts.slice(0, 4);
+  const shortcutSecondRow = studentDashboardShortcuts.slice(4, 8);
+
+  const getShortcutAction = (id: string) => {
+    if (id === 'homework') {
+      return onOpenHomework;
+    }
+    if (id === 'attendance') {
+      return onOpenAttendance;
+    }
+    if (id === 'schedule') {
+      return onOpenSchedule;
+    }
+    if (id === 'score') {
+      return onOpenScore;
+    }
+    if (id === 'exam') {
+      return onOpenExamSchedule;
+    }
+    if (id === 'forum') {
+      return onOpenForum;
+    }
+    if (id === 'leave') {
+      return onOpenLeaveRequest;
+    }
+    if (id === 'all') {
+      return onOpenAllFeatures;
+    }
+
+    return undefined;
+  };
+
   return (
     <View style={styles.screen}>
       <ScrollView bounces={false} contentContainerStyle={styles.scrollContent}>
@@ -100,25 +141,25 @@ export function StudentDashboardScreen({
         </View>
 
         <View style={styles.shortcutGrid}>
-          {studentDashboardShortcuts.map(item => (
-            <ShortcutCard
-              item={item}
-              key={item.id}
-              onPress={
-                item.id === 'attendance'
-                  ? onOpenAttendance
-                  : item.id === 'schedule'
-                    ? onOpenSchedule
-                    : item.id === 'exam'
-                      ? onOpenExamSchedule
-                      : item.id === 'forum'
-                        ? onOpenForum
-                        : item.id === 'leave'
-                          ? onOpenLeaveRequest
-                          : undefined
-              }
-            />
-          ))}
+          <View style={styles.shortcutRow}>
+            {shortcutFirstRow.map(item => (
+              <ShortcutCard
+                item={item}
+                key={item.id}
+                onPress={getShortcutAction(item.id)}
+              />
+            ))}
+          </View>
+
+          <View style={styles.shortcutRow}>
+            {shortcutSecondRow.map(item => (
+              <ShortcutCard
+                item={item}
+                key={item.id}
+                onPress={getShortcutAction(item.id)}
+              />
+            ))}
+          </View>
         </View>
 
         <View style={styles.sectionHeader}>
@@ -139,7 +180,7 @@ export function StudentDashboardScreen({
         </ScrollView>
 
         <View style={styles.quoteCard}>
-          <Image source={assets.quoteBg} style={styles.quoteBg} />
+          <View style={styles.quoteBgFill} />
           <Image source={assets.quoteBar} style={styles.quoteBar} />
           <Text style={styles.quoteText}>{studentQuote.text}</Text>
           <Image source={assets.reload} style={styles.reloadIcon} />
@@ -198,6 +239,10 @@ function ShortcutCard({
 }
 
 function ShortcutIcon({ id }: { id: string }) {
+  if (id === 'score') {
+    return <Image source={assets.score} style={styles.scoreIcon} />;
+  }
+
   if (id === 'homework') {
     return (
       <View style={styles.homeworkWrap}>
@@ -245,6 +290,15 @@ function ShortcutIcon({ id }: { id: string }) {
       </View>
     );
   }
+
+  if (id === 'leave') {
+    return <Image source={assets.leave} style={styles.leaveIcon} />;
+  }
+
+  if (id === 'all') {
+    return <Image source={assets.all} style={styles.allIcon} />;
+  }
+
   return (
     <Text style={styles.shortcutFallback}>
       {id === 'leave' ? '✒' : id === 'score' ? '◔' : '▦'}
@@ -372,12 +426,13 @@ const styles = StyleSheet.create({
 
   shortcutGrid: {
     marginTop: 24,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
     rowGap: 24,
   },
-  shortcutItem: { width: 72, alignItems: 'center' },
+  shortcutRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  shortcutItem: { flex: 1, alignItems: 'center' },
   shortcutCircle: {
     width: 64,
     height: 64,
@@ -479,6 +534,9 @@ const styles = StyleSheet.create({
     top: 17.4,
   },
   examIcon: { width: 21, height: 23.3 },
+  scoreIcon: { width: 26, height: 24.1 },
+  leaveIcon: { width: 25, height: 25 },
+  allIcon: { width: 22, height: 25.1 },
   forumWrap: { width: 26, height: 26 },
   forumOuter: {
     position: 'absolute',
@@ -604,18 +662,29 @@ const styles = StyleSheet.create({
   lessonRoomActive: { color: '#E7F7FD' },
 
   quoteCard: {
-    height: 106,
-    marginTop: 16,
-    borderRadius: 20,
+    height: 126,
+    marginTop: 18,
+    borderRadius: 22,
     overflow: 'hidden',
-    justifyContent: 'center',
-    paddingHorizontal: 20,
+    justifyContent: 'flex-start',
+    paddingLeft: 20,
+    paddingRight: 22,
+    paddingTop: 14,
+    paddingBottom: 12,
+    backgroundColor: '#DFEEF5',
   },
-  quoteBg: { position: 'absolute', width: '100%', height: '100%' },
-  quoteBar: { position: 'absolute', left: 14, top: 11, width: 4, height: 83 },
+  quoteBgFill: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    backgroundColor: '#DFEEF5',
+  },
+  quoteBar: { position: 'absolute', left: 14, top: 14, width: 4, height: 98 },
   quoteText: {
     marginLeft: 18,
-    marginRight: 44,
+    marginRight: 62,
     fontSize: 16,
     lineHeight: 20,
     color: '#000000',
@@ -623,14 +692,14 @@ const styles = StyleSheet.create({
   reloadIcon: {
     position: 'absolute',
     right: 18,
-    top: 40,
+    top: 66,
     width: 22.4,
     height: 19.5,
   },
   quoteAuthor: {
     position: 'absolute',
     right: 18,
-    bottom: 16,
+    bottom: 18,
     fontSize: 17,
     color: '#838383',
     fontWeight: '700',

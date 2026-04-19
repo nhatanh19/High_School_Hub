@@ -14,15 +14,22 @@ import { OnboardingScreen } from './src/screens/OnboardingScreen';
 import { RoleSelectionScreen } from './src/screens/RoleSelectionScreen';
 import { SplashScreen } from './src/screens/SplashScreen';
 import { StudentAttendanceScreen } from './src/screens/StudentAttendanceScreen';
+import { StudentAllFeaturesScreen } from './src/screens/StudentAllFeaturesScreen';
 import { StudentCreatePostScreen } from './src/screens/StudentCreatePostScreen';
 import { StudentDashboardScreen } from './src/screens/StudentDashboardScreen';
 import { StudentEditProfileScreen } from './src/screens/StudentEditProfileScreen';
 import { StudentExamScheduleScreen } from './src/screens/StudentExamScheduleScreen';
 import { StudentForumScreen } from './src/screens/StudentForumScreen';
+import { StudentHomeworkScreen } from './src/screens/StudentHomeworkScreen';
 import { StudentLeaveRequestPreviewScreen } from './src/screens/StudentLeaveRequestPreviewScreen';
 import { StudentLeaveRequestScreen } from './src/screens/StudentLeaveRequestScreen';
 import { StudentNotificationsScreen } from './src/screens/StudentNotificationsScreen';
 import { StudentProfileScreen } from './src/screens/StudentProfileScreen';
+import { StudentQuizAiAnalysisScreen } from './src/screens/StudentQuizAiAnalysisScreen';
+import { StudentQuizAnswerReviewScreen } from './src/screens/StudentQuizAnswerReviewScreen';
+import { StudentQuizQuestionScreen } from './src/screens/StudentQuizQuestionScreen';
+import { StudentQuizResultScreen } from './src/screens/StudentQuizResultScreen';
+import { StudentScoreBookScreen } from './src/screens/StudentScoreBookScreen';
 import { StudentScheduleScreen } from './src/screens/StudentScheduleScreen';
 import { StudentSearchScreen } from './src/screens/StudentSearchScreen';
 import { StudentSettingsScreen } from './src/screens/StudentSettingsScreen';
@@ -141,11 +148,14 @@ function App() {
         {activeScreen === 'student-dashboard' ? (
           <StudentDashboardScreen
             onOpenAttendance={() => setActiveScreen('student-attendance')}
+            onOpenAllFeatures={() => setActiveScreen('student-all-features')}
             onOpenExamSchedule={() => setActiveScreen('student-exam-schedule')}
             onOpenForum={() => setActiveScreen('student-forum')}
+            onOpenHomework={() => setActiveScreen('student-homework')}
             onOpenLeaveRequest={() => setActiveScreen('student-leave-request')}
             onOpenNotifications={() => setActiveScreen('student-notifications')}
             onOpenProfile={() => setActiveScreen('student-settings')}
+            onOpenScore={() => setActiveScreen('student-scorebook')}
             onOpenSchedule={() => setActiveScreen('student-schedule')}
             onOpenSearch={() => openStudentSearch('student-dashboard')}
           />
@@ -204,6 +214,45 @@ function App() {
         ) : null}
         {activeScreen === 'student-exam-schedule' ? (
           <StudentExamScheduleScreen
+            onBack={() => setActiveScreen('student-dashboard')}
+          />
+        ) : null}
+        {activeScreen === 'student-homework' ? (
+          <StudentHomeworkScreen
+            onBack={() => setActiveScreen('student-dashboard')}
+            onOpenQuiz={() => setActiveScreen('student-quiz-question')}
+          />
+        ) : null}
+        {activeScreen === 'student-all-features' ? (
+          <StudentAllFeaturesScreen
+            onBack={() => setActiveScreen('student-dashboard')}
+          />
+        ) : null}
+        {activeScreen === 'student-quiz-question' ? (
+          <StudentQuizQuestionScreen
+            onBack={() => setActiveScreen('student-homework')}
+            onSubmit={() => setActiveScreen('student-quiz-result')}
+          />
+        ) : null}
+        {activeScreen === 'student-quiz-result' ? (
+          <StudentQuizResultScreen
+            onBack={() => setActiveScreen('student-homework')}
+            onOpenAi={() => setActiveScreen('student-quiz-ai-analysis')}
+            onOpenReview={() => setActiveScreen('student-quiz-answer-review')}
+          />
+        ) : null}
+        {activeScreen === 'student-quiz-ai-analysis' ? (
+          <StudentQuizAiAnalysisScreen
+            onBack={() => setActiveScreen('student-quiz-result')}
+          />
+        ) : null}
+        {activeScreen === 'student-quiz-answer-review' ? (
+          <StudentQuizAnswerReviewScreen
+            onBack={() => setActiveScreen('student-quiz-result')}
+          />
+        ) : null}
+        {activeScreen === 'student-scorebook' ? (
+          <StudentScoreBookScreen
             onBack={() => setActiveScreen('student-dashboard')}
           />
         ) : null}

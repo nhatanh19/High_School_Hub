@@ -1,32 +1,66 @@
-﻿import React from 'react';
-import {Pressable, ScrollView, StyleSheet, Text, View} from 'react-native';
-import {studentExamSchedule} from '../mocks/studentExamSchedule';
-import type {ExamScheduleItem} from '../models/exam';
+import React from 'react';
+import {
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import { studentExamSchedule } from '../mocks/studentExamSchedule';
+import type { ExamScheduleItem } from '../models/exam';
 
 type Props = {
   onBack: () => void;
 };
 
-export function StudentExamScheduleScreen({onBack}: Props) {
+const assets = {
+  back: require('../assets/exam/student/icons/back.png'),
+  bookReader: require('../assets/exam/student/icons/book_reader.png'),
+  calculator: require('../assets/exam/student/icons/calculator.png'),
+  cardBorder: require('../assets/exam/student/icons/card_border.png'),
+  download: require('../assets/exam/student/icons/download.png'),
+  globeAsia: require('../assets/exam/student/icons/globe_asia.png'),
+  language: require('../assets/exam/student/icons/language.png'),
+  mapMarker: require('../assets/exam/student/icons/map_marker.png'),
+  palette: require('../assets/exam/student/icons/palette.png'),
+};
+
+const subjectIcons: Record<string, number> = {
+  'Mỹ thuật': assets.palette,
+  'Ngữ Văn': assets.bookReader,
+  'Tiếng Anh': assets.language,
+  'Toán học': assets.calculator,
+  'Xã hội học': assets.globeAsia,
+};
+
+export function StudentExamScheduleScreen({ onBack }: Props) {
   return (
     <View style={styles.screen}>
       <View style={styles.topBar}>
         <Pressable hitSlop={8} onPress={onBack} style={styles.backButton}>
-          <Text style={styles.backIcon}>‹</Text>
+          <Image source={assets.back} style={styles.backIcon} />
         </Pressable>
+
         <Text style={styles.topBarTitle}>Lịch thi</Text>
+        <Text style={styles.editText}>Sửa</Text>
       </View>
 
       <ScrollView
         bounces={false}
         contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}>
-        {studentExamSchedule.map(item => (
-          <ExamTimelineItem item={item} key={item.id} />
+        showsVerticalScrollIndicator={false}
+      >
+        {studentExamSchedule.map((item, index) => (
+          <ExamTimelineItem
+            isLast={index === studentExamSchedule.length - 1}
+            item={item}
+            key={item.id}
+          />
         ))}
 
         <Pressable style={styles.downloadButton}>
-          <Text style={styles.downloadIcon}>⇩</Text>
+          <Image source={assets.download} style={styles.downloadIcon} />
           <Text style={styles.downloadText}>TẢI LỊCH VỀ MÁY</Text>
         </Pressable>
       </ScrollView>
@@ -34,37 +68,50 @@ export function StudentExamScheduleScreen({onBack}: Props) {
   );
 }
 
-type ExamTimelineItemProps = {
+function ExamTimelineItem({
+  isLast,
+  item,
+}: {
+  isLast: boolean;
   item: ExamScheduleItem;
-};
+}) {
+  const iconSource = subjectIcons[item.subject];
 
-function ExamTimelineItem({item}: ExamTimelineItemProps) {
   return (
     <View style={styles.timelineRow}>
-      <View style={styles.timelineRail}>
-        <View style={styles.timelineDot} />
-        <View style={styles.timelineLine} />
+      <View style={styles.leftRail}>
+        <View style={styles.dateDot} />
+        {!isLast ? <View style={styles.timelineLine} /> : null}
       </View>
 
       <View style={styles.timelineContent}>
-        <Text style={styles.dayLabel}>{item.dayLabel}</Text>
-        <Text style={styles.dateLabel}>{item.dateLabel}</Text>
+        <View style={styles.dateBlock}>
+          <Text style={styles.dayLabel}>{item.dayLabel}</Text>
+          <Text style={styles.dateLabel}>{item.dateLabel}</Text>
+        </View>
 
-        <View style={styles.examCardWrap}>
-          <View style={[styles.examTrack, {backgroundColor: item.trackColor}]} />
-          <View style={styles.examCard}>
-            <View style={[styles.examIconWrap, {backgroundColor: item.iconTint}]}>
-              <Text style={[styles.examIcon, {color: item.iconColor}]}>{item.icon}</Text>
-            </View>
+        <View style={styles.examCard}>
+          <Image source={assets.cardBorder} style={styles.cardBorder} />
 
-            <View style={styles.examBody}>
-              <Text style={styles.examSubject}>{item.subject}</Text>
-              <Text style={styles.examRoom}>📍 {item.room}</Text>
-            </View>
+          <View
+            style={[styles.examIconWrap, { backgroundColor: item.iconTint }]}
+          >
+            {iconSource ? (
+              <Image source={iconSource} style={styles.examIconImage} />
+            ) : null}
+          </View>
 
-            <View style={styles.timePill}>
-              <Text style={styles.timePillText}>{item.timeLabel}</Text>
+          <View style={styles.examBody}>
+            <Text style={styles.examSubject}>{item.subject}</Text>
+
+            <View style={styles.roomRow}>
+              <Image source={assets.mapMarker} style={styles.markerIcon} />
+              <Text style={styles.examRoom}>{item.room}</Text>
             </View>
+          </View>
+
+          <View style={styles.timePill}>
+            <Text style={styles.timePillText}>{item.timeLabel}</Text>
           </View>
         </View>
       </View>
@@ -75,157 +122,191 @@ function ExamTimelineItem({item}: ExamTimelineItemProps) {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F8FAFC',
   },
   topBar: {
-    height: 82,
-    backgroundColor: '#69BFDE',
+    height: 44,
+    backgroundColor: '#63BAD5',
     alignItems: 'center',
-    justifyContent: 'flex-end',
-    paddingBottom: 16,
+    justifyContent: 'center',
     position: 'relative',
   },
   backButton: {
     position: 'absolute',
-    left: 16,
-    bottom: 10,
+    left: 10,
+    top: 7,
+    width: 30,
+    height: 30,
+    alignItems: 'center',
     justifyContent: 'center',
   },
   backIcon: {
-    color: '#FFFFFF',
-    fontSize: 40,
-    lineHeight: 40,
+    width: 14,
+    height: 18,
+    resizeMode: 'contain',
   },
   topBarTitle: {
     color: '#FFFFFF',
-    fontSize: 24,
-    fontWeight: '900',
+    fontSize: 18,
+    fontWeight: '700',
+  },
+  editText: {
+    position: 'absolute',
+    right: 18,
+    top: 14,
+    color: '#63BAD5',
+    fontSize: 14,
+    fontWeight: '700',
   },
   scrollContent: {
-    paddingHorizontal: 18,
-    paddingTop: 20,
-    paddingBottom: 28,
+    paddingHorizontal: 24,
+    paddingTop: 18,
+    paddingBottom: 20,
   },
   timelineRow: {
     flexDirection: 'row',
-    marginBottom: 24,
-  },
-  timelineRail: {
-    width: 24,
-    alignItems: 'center',
-    paddingTop: 4,
-  },
-  timelineDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: '#67BCDB',
     marginBottom: 8,
   },
+  leftRail: {
+    width: 12,
+    alignItems: 'center',
+    position: 'relative',
+  },
+  dateDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: '#63BAD5',
+    borderWidth: 3,
+    borderColor: '#FFFFFF',
+    marginTop: 4,
+  },
   timelineLine: {
-    width: 4,
+    width: 2,
+    backgroundColor: '#E5E7EB',
     flex: 1,
-    borderRadius: 2,
-    backgroundColor: '#EEF2F7',
+    marginTop: 2,
   },
   timelineContent: {
     flex: 1,
-    paddingLeft: 12,
+    marginLeft: 20,
+    paddingBottom: 10,
+  },
+  dateBlock: {
+    paddingLeft: 16,
+    marginBottom: 8,
   },
   dayLabel: {
-    color: '#6E778A',
-    fontSize: 15,
-    fontWeight: '800',
+    color: '#6B7280',
+    fontSize: 14,
+    fontWeight: '700',
+    lineHeight: 20,
   },
   dateLabel: {
-    color: '#202938',
-    fontSize: 18,
-    fontWeight: '900',
-    marginTop: 8,
-    marginBottom: 12,
-  },
-  examCardWrap: {
-    flexDirection: 'row',
-  },
-  examTrack: {
-    width: 3,
-    borderTopLeftRadius: 3,
-    borderBottomLeftRadius: 3,
+    color: '#1F2937',
+    fontSize: 16,
+    fontWeight: '700',
+    lineHeight: 38,
+    marginTop: -2,
   },
   examCard: {
-    flex: 1,
-    minHeight: 108,
-    borderWidth: 1,
-    borderColor: '#E9EDF3',
-    borderLeftWidth: 0,
+    height: 76,
+    borderRadius: 16,
     backgroundColor: '#FFFFFF',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    elevation: 2,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+    paddingHorizontal: 17,
+    overflow: 'hidden',
+  },
+  cardBorder: {
+    ...StyleSheet.absoluteFillObject,
+    width: '100%',
+    height: '100%',
+    resizeMode: 'stretch',
   },
   examIconWrap: {
-    width: 58,
-    height: 58,
-    borderRadius: 18,
+    width: 40,
+    height: 40,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 14,
+    marginRight: 16,
   },
-  examIcon: {
-    fontSize: 22,
-    fontWeight: '800',
+  examIconImage: {
+    width: 14.02,
+    height: 18,
+    resizeMode: 'contain',
   },
   examBody: {
     flex: 1,
-    paddingRight: 10,
+    paddingRight: 6,
   },
   examSubject: {
-    color: '#222C3A',
-    fontSize: 18,
-    fontWeight: '900',
+    color: '#1F2937',
+    fontSize: 16,
+    fontWeight: '700',
+    lineHeight: 24,
+  },
+  roomRow: {
+    marginTop: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  markerIcon: {
+    width: 9.34,
+    height: 12,
+    resizeMode: 'contain',
+    marginRight: 8,
   },
   examRoom: {
-    color: '#6D778A',
-    fontSize: 14,
-    marginTop: 6,
+    color: '#6B7280',
+    fontSize: 12,
+    fontWeight: '500',
+    lineHeight: 16,
   },
   timePill: {
-    minWidth: 98,
-    height: 42,
-    borderRadius: 14,
-    backgroundColor: '#F4F6FA',
+    width: 63.89,
+    height: 24.5,
+    borderRadius: 8,
+    backgroundColor: '#F3F4F6',
     alignItems: 'center',
     justifyContent: 'center',
   },
   timePillText: {
-    color: '#4E596B',
-    fontSize: 14,
-    fontWeight: '800',
+    color: '#4B5563',
+    fontSize: 11,
+    fontWeight: '700',
+    lineHeight: 16.5,
   },
   downloadButton: {
-    marginTop: 6,
-    height: 84,
-    borderRadius: 22,
-    backgroundColor: '#69BFDE',
+    marginTop: 14,
+    height: 52,
+    borderRadius: 12,
+    backgroundColor: '#63BAD5',
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    flexDirection: 'row',
-    shadowColor: '#8ECFE5',
-    shadowOffset: {width: 0, height: 10},
-    shadowOpacity: 0.28,
-    shadowRadius: 16,
-    elevation: 5,
+    shadowColor: '#93C5FD',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 6,
+    elevation: 4,
   },
   downloadIcon: {
-    color: '#FFFFFF',
-    fontSize: 28,
-    marginRight: 12,
-    lineHeight: 30,
+    width: 14.02,
+    height: 18,
+    resizeMode: 'contain',
+    marginRight: 8,
   },
   downloadText: {
     color: '#FFFFFF',
     fontSize: 18,
-    fontWeight: '900',
+    fontWeight: '700',
+    lineHeight: 28,
   },
 });

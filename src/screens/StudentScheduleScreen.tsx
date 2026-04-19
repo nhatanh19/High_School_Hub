@@ -1,47 +1,71 @@
-﻿import React from 'react';
-import {Pressable, ScrollView, StyleSheet, Text, View} from 'react-native';
-import {studentScheduleDays, studentScheduleTimeline} from '../mocks/studentSchedule';
-import type {ScheduleDayOption, ScheduleTimelineItem} from '../models/schedule';
+import React from 'react';
+import {
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import {
+  studentScheduleDays,
+  studentScheduleTimeline,
+} from '../mocks/studentSchedule';
+import type {
+  ScheduleDayOption,
+  ScheduleTimelineItem,
+} from '../models/schedule';
 
 type Props = {
   onBack: () => void;
 };
 
-export function StudentScheduleScreen({onBack}: Props) {
+const assets = {
+  back: require('../assets/schedule/student/icons/back.png'),
+  dotDefault: require('../assets/schedule/student/icons/timeline_dot_default.png'),
+  dotInnerActive: require('../assets/schedule/student/icons/timeline_dot_inner_active.png'),
+  dotOuterActive: require('../assets/schedule/student/icons/timeline_dot_outer_active.png'),
+  googleDocs: require('../assets/schedule/student/icons/google_docs.png'),
+  googleMeet: require('../assets/schedule/student/icons/google_meet.png'),
+  menuDark: require('../assets/schedule/student/icons/menu_dark.png'),
+  menuWhite: require('../assets/schedule/student/icons/menu_white.png'),
+  physicsMark: require('../assets/schedule/student/icons/physics_mark.png'),
+  userPrimary: require('../assets/schedule/student/icons/meta_user_primary.png'),
+  userPrimaryInverted: require('../assets/schedule/student/icons/meta_user_primary_inverted.png'),
+  userSecondary: require('../assets/schedule/student/icons/meta_user_secondary.png'),
+  zoom: require('../assets/schedule/student/icons/zoom.png'),
+};
+
+export function StudentScheduleScreen({ onBack }: Props) {
   return (
     <View style={styles.screen}>
       <View style={styles.topBar}>
         <Pressable hitSlop={8} onPress={onBack} style={styles.backButton}>
-          <Text style={styles.backIcon}>‹</Text>
+          <Image source={assets.back} style={styles.backIcon} />
         </Pressable>
+
         <Text style={styles.topBarTitle}>Thời khóa biểu</Text>
       </View>
 
       <ScrollView
         bounces={false}
         contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.daysRow}>
           {studentScheduleDays.map(item => (
             <DayItem item={item} key={item.id} />
           ))}
         </View>
 
-        <View style={styles.timelineWrap}>
-          <View style={styles.timelineRail}>
-            <View style={styles.timelineLine} />
-            {studentScheduleTimeline.map((item, index) => (
-              <View key={item.id} style={[styles.railDotWrap, {top: index * 192 + 6}]}>
-                <View style={styles.railDot} />
-              </View>
-            ))}
-          </View>
-
-          <View style={styles.timelineContent}>
-            {studentScheduleTimeline.map(item => (
-              <ScheduleTimelineCard item={item} key={item.id} />
-            ))}
-          </View>
+        <View style={styles.timelineList}>
+          {studentScheduleTimeline.map((item, index) => (
+            <ScheduleTimelineCard
+              isLast={index === studentScheduleTimeline.length - 1}
+              item={item}
+              key={item.id}
+            />
+          ))}
         </View>
       </ScrollView>
 
@@ -49,6 +73,7 @@ export function StudentScheduleScreen({onBack}: Props) {
         <Pressable style={styles.downloadButton}>
           <Text style={styles.footerActionText}>Tải xuống</Text>
         </Pressable>
+
         <Pressable style={styles.viewButton}>
           <Text style={styles.footerActionText}>Xem</Text>
         </Pressable>
@@ -57,22 +82,50 @@ export function StudentScheduleScreen({onBack}: Props) {
   );
 }
 
-function DayItem({item}: {item: ScheduleDayOption}) {
+function DayItem({ item }: { item: ScheduleDayOption }) {
   return (
     <View style={styles.dayItem}>
-      <Text style={[styles.dayLabel, item.isActive ? styles.dayLabelActive : null]}>
+      <Text
+        style={[styles.dayLabel, item.isActive ? styles.dayLabelActive : null]}
+      >
         {item.dayLabel}
       </Text>
-      <Text style={[styles.dayNumber, item.isActive ? styles.dayNumberActive : null]}>
+
+      <Text
+        style={[
+          styles.dayNumber,
+          item.isActive ? styles.dayNumberActive : null,
+        ]}
+      >
         {item.dateNumber}
       </Text>
+
       {item.isActive ? <View style={styles.dayUnderline} /> : null}
     </View>
   );
 }
 
-function ScheduleTimelineCard({item}: {item: ScheduleTimelineItem}) {
+function ScheduleTimelineCard({
+  isLast,
+  item,
+}: {
+  isLast: boolean;
+  item: ScheduleTimelineItem;
+}) {
   const isPrimary = item.lesson.id === 'lesson-physics';
+  const userIcon =
+    item.lesson.id === 'lesson-physics'
+      ? assets.userPrimaryInverted
+      : item.lesson.id === 'lesson-geology'
+        ? assets.userPrimary
+        : assets.userSecondary;
+
+  const platformIcon =
+    item.lesson.platform === 'Google Meet'
+      ? assets.googleMeet
+      : item.lesson.platform === 'Google Docs'
+        ? assets.googleDocs
+        : assets.zoom;
 
   return (
     <View style={styles.timelineItemRow}>
@@ -81,39 +134,75 @@ function ScheduleTimelineCard({item}: {item: ScheduleTimelineItem}) {
         <Text style={styles.endTime}>{item.endTime}</Text>
       </View>
 
-      <View style={[styles.lessonCard, {backgroundColor: item.lesson.accentColor}]}> 
-        <Text style={[styles.lessonTitle, isPrimary ? styles.lessonTitlePrimary : null]}>
+      <View style={styles.railColumn}>
+        {isPrimary ? (
+          <>
+            <Image
+              source={assets.dotOuterActive}
+              style={styles.dotOuterActive}
+            />
+            <Image
+              source={assets.dotInnerActive}
+              style={styles.dotInnerActive}
+            />
+          </>
+        ) : (
+          <Image source={assets.dotDefault} style={styles.dotDefault} />
+        )}
+
+        {!isLast ? <View style={styles.railLine} /> : null}
+      </View>
+
+      <View
+        style={[
+          styles.lessonCard,
+          isPrimary ? styles.lessonCardPrimary : styles.lessonCardSecondary,
+        ]}
+      >
+        <Image
+          source={isPrimary ? assets.menuWhite : assets.menuDark}
+          style={styles.cardMenuIcon}
+        />
+
+        <Text
+          style={[
+            styles.lessonTitle,
+            isPrimary ? styles.lessonTitlePrimary : null,
+          ]}
+        >
           {item.lesson.title}
         </Text>
-        <Text style={[styles.lessonTopic, isPrimary ? styles.lessonTopicPrimary : null]}>
+
+        <Text
+          style={[
+            styles.lessonTopic,
+            isPrimary ? styles.lessonTopicPrimary : null,
+          ]}
+        >
           {item.lesson.topic}
         </Text>
 
-        <View style={styles.lessonMetaWrap}>
-          <View>
-            <View style={styles.metaRow}>
-              <View style={styles.personBadge}>
-                <Text style={styles.personBadgeText}>{item.lesson.teacherName.slice(0, 1)}</Text>
-              </View>
-              <Text style={[styles.metaText, isPrimary ? styles.metaTextPrimary : null]}>
-                {item.lesson.teacherName}
-              </Text>
-            </View>
-
-            <View style={[styles.metaRow, styles.platformRow]}>
-              <View style={styles.platformBadge}>
-                <Text style={styles.platformBadgeText}>{item.lesson.platformIcon}</Text>
-              </View>
-              <Text style={[styles.metaText, isPrimary ? styles.metaTextPrimary : null]}>
-                {item.lesson.platform}
-              </Text>
-            </View>
-          </View>
-
-          <Text style={[styles.lessonIcon, isPrimary ? styles.lessonIconPrimary : null]}>
-            {item.lesson.icon}
+        <View style={styles.metaRow}>
+          <Image source={userIcon} style={styles.metaIcon} />
+          <Text
+            style={[styles.metaText, isPrimary ? styles.metaTextPrimary : null]}
+          >
+            {item.lesson.teacherName}
           </Text>
         </View>
+
+        <View style={[styles.metaRow, styles.metaRowBottom]}>
+          <Image source={platformIcon} style={styles.platformIcon} />
+          <Text
+            style={[styles.metaText, isPrimary ? styles.metaTextPrimary : null]}
+          >
+            {item.lesson.platform}
+          </Text>
+        </View>
+
+        {isPrimary ? (
+          <Image source={assets.physicsMark} style={styles.physicsMark} />
+        ) : null}
       </View>
     </View>
   );
@@ -125,246 +214,243 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   topBar: {
-    height: 82,
-    backgroundColor: '#69BFDE',
+    height: 57,
+    backgroundColor: '#63BAD5',
     alignItems: 'center',
-    justifyContent: 'flex-end',
-    paddingBottom: 16,
+    justifyContent: 'center',
     position: 'relative',
   },
   backButton: {
     position: 'absolute',
-    left: 16,
-    bottom: 10,
+    left: 14,
+    top: 7,
+    width: 28,
+    height: 43,
     justifyContent: 'center',
+    alignItems: 'center',
   },
   backIcon: {
-    color: '#FFFFFF',
-    fontSize: 40,
-    lineHeight: 40,
+    width: 14,
+    height: 25,
+    resizeMode: 'contain',
   },
   topBarTitle: {
     color: '#FFFFFF',
     fontSize: 24,
-    fontWeight: '900',
+    fontWeight: '700',
+    letterSpacing: -0.3,
   },
   scrollContent: {
-    paddingTop: 18,
-    paddingHorizontal: 14,
-    paddingBottom: 130,
+    paddingTop: 14,
+    paddingHorizontal: 18,
+    paddingBottom: 94,
   },
   daysRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 8,
-    marginBottom: 24,
+    marginBottom: 14,
   },
   dayItem: {
     alignItems: 'center',
-    width: 46,
+    width: 38,
   },
   dayLabel: {
-    color: '#111111',
-    fontSize: 14,
-    fontWeight: '500',
+    color: '#000000',
+    fontSize: 13,
+    fontWeight: '400',
   },
   dayLabelActive: {
-    color: '#53C79B',
+    color: '#49B583',
   },
   dayNumber: {
-    color: '#151515',
-    fontSize: 22,
-    fontWeight: '900',
-    marginTop: 8,
+    color: '#000000',
+    fontSize: 17,
+    fontWeight: '700',
+    marginTop: 4,
   },
   dayNumberActive: {
-    color: '#53C79B',
+    color: '#49B583',
   },
   dayUnderline: {
-    width: 54,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: '#53C79B',
-    marginTop: 10,
+    width: 31,
+    height: 2,
+    borderRadius: 8,
+    backgroundColor: '#49B583',
+    marginTop: 3,
   },
-  timelineWrap: {
-    flexDirection: 'row',
-  },
-  timelineRail: {
-    width: 38,
-    alignItems: 'center',
-    position: 'relative',
-  },
-  timelineLine: {
-    position: 'absolute',
-    top: 56,
-    bottom: 18,
-    width: 4,
-    borderRadius: 2,
-    backgroundColor: '#7980F1',
-  },
-  railDotWrap: {
-    position: 'absolute',
-    left: 10,
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    borderWidth: 3,
-    borderColor: '#7980F1',
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  railDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#FFFFFF',
-  },
-  timelineContent: {
-    flex: 1,
-    gap: 18,
+  timelineList: {
+    rowGap: 18,
   },
   timelineItemRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    minHeight: 174,
   },
   timeColumn: {
-    width: 72,
-    paddingTop: 6,
-    paddingRight: 10,
+    width: 56,
+    paddingTop: 2,
   },
   startTime: {
-    color: '#111111',
-    fontSize: 22,
-    fontWeight: '500',
+    color: '#000000',
+    fontSize: 17,
+    fontWeight: '700',
+    lineHeight: 22,
   },
   endTime: {
-    color: '#A0A3AA',
-    fontSize: 16,
-    fontStyle: 'italic',
+    color: 'rgba(0,0,0,0.4)',
+    fontSize: 13,
     fontWeight: '700',
-    marginTop: 6,
+    marginTop: 4,
+    lineHeight: 22,
+  },
+  railColumn: {
+    width: 22,
+    alignItems: 'center',
+    marginRight: 9,
+  },
+  dotOuterActive: {
+    width: 16,
+    height: 16,
+    resizeMode: 'contain',
+  },
+  dotInnerActive: {
+    position: 'absolute',
+    top: 4,
+    width: 8,
+    height: 8,
+    resizeMode: 'contain',
+  },
+  dotDefault: {
+    width: 10,
+    height: 10,
+    resizeMode: 'contain',
+  },
+  railLine: {
+    width: 2,
+    height: 140,
+    marginTop: 4,
+    backgroundColor: '#54B07A',
+    borderColor: '#7F86FF',
+    borderWidth: 1,
   },
   lessonCard: {
     flex: 1,
-    borderRadius: 26,
-    paddingHorizontal: 18,
-    paddingVertical: 18,
-    shadowColor: '#DDE5F0',
-    shadowOffset: {width: 0, height: 10},
-    shadowOpacity: 0.2,
-    shadowRadius: 18,
+    minHeight: 146,
+    borderRadius: 16,
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: 14,
+    overflow: 'hidden',
+  },
+  lessonCardPrimary: {
+    backgroundColor: '#7F86FF',
+    shadowColor: '#7F86FF',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.3,
+    shadowRadius: 24,
     elevation: 4,
   },
+  lessonCardSecondary: {
+    backgroundColor: 'rgba(169, 255, 253, 0.25)',
+  },
+  cardMenuIcon: {
+    position: 'absolute',
+    right: 20,
+    top: 20,
+    width: 4,
+    height: 12,
+    resizeMode: 'contain',
+  },
   lessonTitle: {
-    color: '#111111',
-    fontSize: 22,
-    fontWeight: '900',
+    color: 'rgba(0,0,0,0.9)',
+    fontSize: 17,
+    fontWeight: '700',
+    lineHeight: 22,
+    paddingRight: 34,
   },
   lessonTitlePrimary: {
     color: '#FFFFFF',
   },
   lessonTopic: {
-    color: '#7C838C',
-    fontSize: 16,
-    fontWeight: '600',
-    marginTop: 10,
+    marginTop: 2,
+    color: 'rgba(0,0,0,0.4)',
+    fontSize: 13,
+    fontWeight: '700',
+    lineHeight: 20,
+    paddingRight: 34,
   },
   lessonTopicPrimary: {
-    color: '#F1F4FF',
-  },
-  lessonMetaWrap: {
-    marginTop: 24,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end',
+    color: '#FFFFFF',
   },
   metaRow: {
+    marginTop: 10,
     flexDirection: 'row',
     alignItems: 'center',
   },
-  platformRow: {
-    marginTop: 10,
+  metaRowBottom: {
+    marginTop: 4,
   },
-  personBadge: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    backgroundColor: '#6E6E6E',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 8,
+  metaIcon: {
+    width: 14,
+    height: 14,
+    resizeMode: 'contain',
+    marginRight: 6,
   },
-  personBadgeText: {
-    color: '#FFFFFF',
-    fontSize: 11,
-    fontWeight: '800',
-  },
-  platformBadge: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    backgroundColor: '#2A8CFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 8,
-  },
-  platformBadgeText: {
-    color: '#FFFFFF',
-    fontSize: 11,
-    fontWeight: '800',
+  platformIcon: {
+    width: 16,
+    height: 16,
+    resizeMode: 'contain',
+    marginRight: 6,
   },
   metaText: {
-    color: '#6E757F',
-    fontSize: 14,
-    fontStyle: 'italic',
+    color: 'rgba(0,0,0,0.4)',
+    fontSize: 13,
     fontWeight: '700',
+    lineHeight: 20,
   },
   metaTextPrimary: {
-    color: '#FFFFFF',
+    color: 'rgba(255,255,255,0.8)',
   },
-  lessonIcon: {
-    color: 'rgba(17,17,17,0.15)',
-    fontSize: 72,
-    fontWeight: '400',
-    marginRight: 8,
-  },
-  lessonIconPrimary: {
-    color: 'rgba(39,29,157,0.32)',
+  physicsMark: {
+    position: 'absolute',
+    right: 18,
+    bottom: 16,
+    width: 63,
+    height: 68,
+    resizeMode: 'contain',
+    opacity: 0.75,
   },
   footerActions: {
     position: 'absolute',
     left: 0,
     right: 0,
     bottom: 0,
-    paddingHorizontal: 14,
-    paddingBottom: 20,
-    paddingTop: 14,
+    paddingHorizontal: 18,
+    paddingTop: 10,
+    paddingBottom: 18,
+    backgroundColor: '#FFFFFF',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: '#FFFFFF',
   },
   downloadButton: {
-    width: '46.5%',
-    height: 72,
-    borderRadius: 18,
-    backgroundColor: '#1BAFD1',
+    width: 156,
+    height: 43,
+    borderRadius: 10,
+    backgroundColor: '#0DA6C2',
     alignItems: 'center',
     justifyContent: 'center',
   },
   viewButton: {
-    width: '46.5%',
-    height: 72,
-    borderRadius: 18,
-    backgroundColor: '#1BAFD1',
+    width: 156,
+    height: 43,
+    borderRadius: 10,
+    backgroundColor: '#0DA6C2',
     alignItems: 'center',
     justifyContent: 'center',
   },
   footerActionText: {
     color: '#FFFFFF',
-    fontSize: 22,
+    fontSize: 16,
     fontWeight: '500',
+    letterSpacing: -0.3,
   },
 });

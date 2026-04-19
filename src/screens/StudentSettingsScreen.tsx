@@ -1,17 +1,55 @@
-﻿import React, {useState} from 'react';
-import {Pressable, ScrollView, StyleSheet, Text, View} from 'react-native';
+import React, { useState } from 'react';
+import {
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import {
   studentSettingsProfile,
   studentSettingsSections,
   studentTuitionCard,
 } from '../mocks/studentSettings';
-import type {SettingsListItem, SettingsSection} from '../models/settings';
+import type { SettingsListItem, SettingsSection } from '../models/settings';
 
 type Props = {
   onBack: () => void;
   onOpenPersonalProfile: () => void;
   onOpenTuitionPayment: () => void;
   tuitionStatus: string;
+};
+
+const assets = {
+  about: require('../assets/settings/icons/about.png'),
+  avatar: require('../assets/settings/icons/avatar.png'),
+  back: require('../assets/settings/icons/back.png'),
+  cache: require('../assets/settings/icons/cache.png'),
+  chevronRight: require('../assets/settings/icons/chevron_right.png'),
+  device: require('../assets/settings/icons/device.png'),
+  faceid: require('../assets/settings/icons/faceid.png'),
+  help: require('../assets/settings/icons/help.png'),
+  language: require('../assets/settings/icons/language.png'),
+  notifications: require('../assets/settings/icons/notifications.png'),
+  password: require('../assets/settings/icons/password.png'),
+  profile: require('../assets/settings/icons/profile.png'),
+  qr: require('../assets/settings/icons/qr.png'),
+  switch3D: require('../assets/settings/icons/switch_3d.png'),
+  theme: require('../assets/settings/icons/theme.png'),
+};
+
+const leadingIconById: Record<string, number> = {
+  about: assets.about,
+  cache: assets.cache,
+  device: assets.device,
+  faceid: assets.faceid,
+  help: assets.help,
+  language: assets.language,
+  notifications: assets.notifications,
+  password: assets.password,
+  profile: assets.profile,
+  theme: assets.theme,
 };
 
 export function StudentSettingsScreen({
@@ -30,7 +68,7 @@ export function StudentSettingsScreen({
     <View style={styles.screen}>
       <View style={styles.topBar}>
         <Pressable hitSlop={8} onPress={onBack} style={styles.backButton}>
-          <Text style={styles.backIcon}>‹</Text>
+          <Image source={assets.back} style={styles.backIconImage} />
         </Pressable>
         <Text style={styles.topBarTitle}>Cài đặt</Text>
       </View>
@@ -38,17 +76,24 @@ export function StudentSettingsScreen({
       <ScrollView
         bounces={false}
         contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.profileRow}>
           <View style={styles.avatar}>
-            <Text style={styles.avatarText}>ML</Text>
+            <Image source={assets.avatar} style={styles.avatarImage} />
           </View>
 
           <View style={styles.profileBody}>
-            <Text style={styles.profileName}>{studentSettingsProfile.fullName}</Text>
-            <Text style={styles.profileCode}>{studentSettingsProfile.studentCode}</Text>
+            <Text style={styles.profileName}>
+              {studentSettingsProfile.fullName}
+            </Text>
+            <Text style={styles.profileCode}>
+              {studentSettingsProfile.studentCode}
+            </Text>
             <View style={styles.classPill}>
-              <Text style={styles.classPillText}>{studentSettingsProfile.className}</Text>
+              <Text style={styles.classPillText}>
+                {studentSettingsProfile.className}
+              </Text>
             </View>
           </View>
         </View>
@@ -58,9 +103,15 @@ export function StudentSettingsScreen({
           <View style={styles.tuitionOrb} />
           <View style={styles.tuitionHeaderRow}>
             <View style={styles.tuitionContent}>
-              <Text style={styles.tuitionMonth}>{studentTuitionCard.monthLabel}</Text>
-              <Text style={styles.tuitionAmount}>{studentTuitionCard.amount}</Text>
-              <Text style={styles.tuitionDeadline}>{studentTuitionCard.deadline}</Text>
+              <Text style={styles.tuitionMonth}>
+                {studentTuitionCard.monthLabel}
+              </Text>
+              <Text style={styles.tuitionAmount}>
+                {studentTuitionCard.amount}
+              </Text>
+              <Text style={styles.tuitionDeadline}>
+                {studentTuitionCard.deadline}
+              </Text>
             </View>
 
             <View style={styles.statusPill}>
@@ -70,7 +121,7 @@ export function StudentSettingsScreen({
           </View>
 
           <Pressable onPress={onOpenTuitionPayment} style={styles.qrButton}>
-            <Text style={styles.qrIcon}>▦</Text>
+            <Image source={assets.qr} style={styles.qrIconImage} />
             <Text style={styles.qrText}>Quét mã QR thanh toán</Text>
           </Pressable>
         </View>
@@ -144,29 +195,47 @@ function SettingsRow({
   onPress,
   onToggleBiometric,
 }: SettingsRowProps) {
+  const leadingIcon = leadingIconById[item.id];
+
   return (
     <Pressable
       onPress={item.type === 'arrow' ? onPress : undefined}
-      style={[styles.settingRow, !isLast ? styles.rowDivider : null]}>
-      <View style={[styles.settingIconWrap, {backgroundColor: item.iconTint}]}>
-        <Text style={[styles.settingIcon, {color: item.iconColor}]}>{item.icon}</Text>
+      style={[styles.settingRow, !isLast ? styles.rowDivider : null]}
+    >
+      <View
+        style={[styles.settingIconWrap, { backgroundColor: item.iconTint }]}
+      >
+        {leadingIcon ? (
+          <Image source={leadingIcon} style={styles.settingIconImage} />
+        ) : (
+          <Text style={[styles.settingIcon, { color: item.iconColor }]}>
+            {item.icon}
+          </Text>
+        )}
       </View>
 
       <Text style={styles.settingTitle}>{item.title}</Text>
 
       {item.type === 'switch' ? (
-        <Pressable hitSlop={8} onPress={onToggleBiometric} style={styles.switchTrack}>
-          <View
+        <Pressable
+          hitSlop={8}
+          onPress={onToggleBiometric}
+          style={styles.switchTrack}
+        >
+          <Image
+            source={assets.switch3D}
             style={[
-              styles.switchThumb,
-              isBiometricEnabled ? styles.switchThumbActive : null,
+              styles.switchImage,
+              !isBiometricEnabled ? styles.switchImageDisabled : null,
             ]}
           />
         </Pressable>
       ) : (
         <View style={styles.trailingWrap}>
-          {item.trailingText ? <Text style={styles.trailingText}>{item.trailingText}</Text> : null}
-          <Text style={styles.chevron}>›</Text>
+          {item.trailingText ? (
+            <Text style={styles.trailingText}>{item.trailingText}</Text>
+          ) : null}
+          <Image source={assets.chevronRight} style={styles.chevronIcon} />
         </View>
       )}
     </Pressable>
@@ -193,11 +262,10 @@ const styles = StyleSheet.create({
     bottom: 0,
     justifyContent: 'center',
   },
-  backIcon: {
-    color: '#FFFFFF',
-    fontSize: 40,
-    lineHeight: 40,
-    fontWeight: '400',
+  backIconImage: {
+    width: 34,
+    height: 30,
+    resizeMode: 'contain',
   },
   topBarTitle: {
     color: '#FFFFFF',
@@ -215,18 +283,23 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: '#1E1E1E',
+    width: 76,
+    height: 76,
+    borderRadius: 38,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 14,
+    overflow: 'hidden',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.25,
+    shadowRadius: 2,
+    elevation: 2,
   },
-  avatarText: {
-    color: '#FFFFFF',
-    fontSize: 24,
-    fontWeight: '900',
+  avatarImage: {
+    width: 76,
+    height: 76,
+    resizeMode: 'cover',
   },
   profileBody: {
     flex: 1,
@@ -330,9 +403,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  qrIcon: {
-    color: '#60BADA',
-    fontSize: 20,
+  qrIconImage: {
+    width: 18,
+    height: 18,
+    resizeMode: 'contain',
     marginRight: 12,
   },
   qrText: {
@@ -347,7 +421,7 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     backgroundColor: '#FFFFFF',
     shadowColor: '#D1D9E4',
-    shadowOffset: {width: 0, height: 8},
+    shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.1,
     shadowRadius: 16,
     elevation: 3,
@@ -374,6 +448,11 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: '700',
   },
+  settingIconImage: {
+    width: 20,
+    height: 20,
+    resizeMode: 'contain',
+  },
   settingTitle: {
     flex: 1,
     color: '#212B39',
@@ -390,33 +469,24 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginRight: 10,
   },
-  chevron: {
-    color: '#C2CAD5',
-    fontSize: 24,
-    lineHeight: 24,
+  chevronIcon: {
+    width: 20,
+    height: 20,
+    resizeMode: 'contain',
   },
   switchTrack: {
-    width: 60,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#D8DEE8',
+    width: 48,
+    height: 22,
     justifyContent: 'center',
-    paddingHorizontal: 3,
+    alignItems: 'center',
   },
-  switchThumb: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#C8D0DB',
+  switchImage: {
+    width: 48,
+    height: 22,
+    resizeMode: 'contain',
   },
-  switchThumbActive: {
-    alignSelf: 'flex-end',
-    backgroundColor: '#69BFDE',
-    borderColor: '#69BFDE',
+  switchImageDisabled: {
+    opacity: 0.5,
   },
   logoutButton: {
     height: 60,

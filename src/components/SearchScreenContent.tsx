@@ -1,6 +1,13 @@
-﻿import React, {useEffect, useState} from 'react';
-import {Pressable, ScrollView, StyleSheet, Text, View} from 'react-native';
-import {VI_STRINGS} from '../constants/vi';
+import React, { useEffect, useState } from 'react';
+import {
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import { VI_STRINGS } from '../constants/vi';
 import type {
   SearchFeatureItem,
   SearchRecentItem,
@@ -13,8 +20,34 @@ type Props = {
   onBack: () => void;
 };
 
-export function SearchScreenContent({data, onBack}: Props) {
-  const [recentItems, setRecentItems] = useState<SearchRecentItem[]>(data.recentItems);
+const assets = {
+  avatarStudent: require('../assets/search/icons/avatar_student.png'),
+  avatarTeacher: require('../assets/search/icons/avatar_teacher.png'),
+  calculator: require('../assets/search/icons/calculator.png'),
+  calendarAlt: require('../assets/search/icons/calendar_alt.png'),
+  chevronLeft: require('../assets/search/icons/chevron_left.png'),
+  chevronRight: require('../assets/search/icons/chevron_right.png'),
+  clock: require('../assets/search/icons/clock.png'),
+  commentAlt: require('../assets/search/icons/comment_alt.png'),
+  fileInvoiceDollar: require('../assets/search/icons/file_invoice_dollar.png'),
+  penNib: require('../assets/search/icons/pen_nib.png'),
+  search: require('../assets/search/icons/search.png'),
+  utensils: require('../assets/search/icons/utensils.png'),
+};
+
+const featureIconSources = [
+  assets.calendarAlt,
+  assets.calculator,
+  assets.penNib,
+  assets.utensils,
+];
+
+const featureIconBoxColors = ['#E3F2FD', '#E8F5E9', '#F3E5F5', '#FFF3E0'];
+
+export function SearchScreenContent({ data, onBack }: Props) {
+  const [recentItems, setRecentItems] = useState<SearchRecentItem[]>(
+    data.recentItems,
+  );
 
   useEffect(() => {
     setRecentItems(data.recentItems);
@@ -22,26 +55,37 @@ export function SearchScreenContent({data, onBack}: Props) {
 
   return (
     <View style={styles.screen}>
-      <ScrollView bounces={false} showsVerticalScrollIndicator={false}>
-        <View style={styles.headerCard}>
-          <View style={styles.headerRow}>
-            <Pressable hitSlop={8} onPress={onBack} style={styles.backWrap}>
-              <Text style={styles.backIcon}>‹</Text>
+      <ScrollView
+        bounces={false}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.headerSection}>
+          <View style={styles.topNav}>
+            <Pressable hitSlop={8} onPress={onBack} style={styles.backButton}>
+              <Image source={assets.chevronLeft} style={styles.backIcon} />
             </Pressable>
+
             <Text style={styles.title}>{VI_STRINGS.searchTitle}</Text>
           </View>
 
-          <View style={styles.searchInputWrap}>
-            <Text style={styles.searchIcon}>⌕</Text>
-            <Text style={styles.searchPlaceholder}>{data.placeholder}</Text>
+          <View style={styles.searchWrap}>
+            <View style={styles.searchInput}>
+              <Image source={assets.search} style={styles.searchIcon} />
+              <Text numberOfLines={1} style={styles.searchPlaceholder}>
+                {data.placeholder}
+              </Text>
+            </View>
           </View>
         </View>
 
-        <View style={styles.body}>
+        <View style={styles.content}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>{VI_STRINGS.searchRecent}</Text>
             <Pressable hitSlop={8} onPress={() => setRecentItems([])}>
-              <Text style={styles.sectionAction}>{VI_STRINGS.searchClearAll}</Text>
+              <Text style={styles.sectionAction}>
+                {VI_STRINGS.searchClearAll}
+              </Text>
             </Pressable>
           </View>
 
@@ -51,21 +95,23 @@ export function SearchScreenContent({data, onBack}: Props) {
             ))}
           </View>
 
-          <View style={styles.sectionHeaderAlt}>
+          <View style={styles.featureHeader}>
             <Text style={styles.sectionTitle}>{VI_STRINGS.searchFeatured}</Text>
             <Text style={styles.sectionAction}>{VI_STRINGS.searchAll}</Text>
           </View>
 
           <View style={styles.featureGrid}>
-            {data.features.map(item => (
-              <FeatureCard item={item} key={item.id} />
+            {data.features.map((item, index) => (
+              <FeatureCard index={index} item={item} key={item.id} />
             ))}
           </View>
 
-          <Text style={styles.sectionTitle}>{VI_STRINGS.searchQuickSuggestions}</Text>
+          <Text style={styles.sectionTitle}>
+            {VI_STRINGS.searchQuickSuggestions}
+          </Text>
           <View style={styles.suggestionList}>
-            {data.suggestions.map(item => (
-              <SuggestionCard item={item} key={item.id} />
+            {data.suggestions.map((item, index) => (
+              <SuggestionCard index={index} item={item} key={item.id} />
             ))}
           </View>
         </View>
@@ -74,58 +120,103 @@ export function SearchScreenContent({data, onBack}: Props) {
   );
 }
 
-type RecentChipProps = {
-  item: SearchRecentItem;
-};
-
-function RecentChip({item}: RecentChipProps) {
+function RecentChip({ item }: { item: SearchRecentItem }) {
   return (
     <View style={styles.recentChip}>
-      <Text style={styles.recentClock}>◔</Text>
+      <Image source={assets.clock} style={styles.recentClock} />
       <Text style={styles.recentText}>{item.label}</Text>
     </View>
   );
 }
 
-type FeatureCardProps = {
+function FeatureCard({
+  item,
+  index,
+}: {
   item: SearchFeatureItem;
-};
+  index: number;
+}) {
+  const iconSource = featureIconSources[index] ?? featureIconSources[0];
+  const iconBoxColor =
+    featureIconBoxColors[index] ??
+    featureIconBoxColors[featureIconBoxColors.length - 1];
 
-function FeatureCard({item}: FeatureCardProps) {
   return (
     <View style={styles.featureCard}>
-      <View style={[styles.featureIconWrap, {backgroundColor: item.tint}]}>
-        <Text style={[styles.featureIcon, {color: item.iconColor}]}>{item.icon}</Text>
+      <View style={[styles.featureIconWrap, { backgroundColor: iconBoxColor }]}>
+        <Image source={iconSource} style={styles.featureIcon} />
       </View>
+
       <View style={styles.featureBody}>
-        <Text style={styles.featureTitle}>{item.title}</Text>
-        <Text style={styles.featureSubtitle}>{item.subtitle}</Text>
+        <Text numberOfLines={2} style={styles.featureTitle}>
+          {item.title}
+        </Text>
+        <Text numberOfLines={1} style={styles.featureSubtitle}>
+          {item.subtitle}
+        </Text>
       </View>
     </View>
   );
 }
 
-type SuggestionCardProps = {
+function SuggestionCard({
+  item,
+  index,
+}: {
   item: SearchSuggestionItem;
-};
+  index: number;
+}) {
+  const isUtility = index === 2;
+  const avatarBackground =
+    index === 0
+      ? assets.avatarTeacher
+      : index === 1
+        ? assets.avatarStudent
+        : null;
 
-function SuggestionCard({item}: SuggestionCardProps) {
   return (
     <View style={styles.suggestionCard}>
-      <View style={[styles.suggestionAvatar, {backgroundColor: item.tint}]}>
-        <Text style={styles.suggestionAvatarText}>{item.avatarLabel}</Text>
+      <View
+        style={[
+          styles.suggestionAvatar,
+          isUtility
+            ? styles.suggestionAvatarUtility
+            : styles.suggestionAvatarPerson,
+        ]}
+      >
+        {avatarBackground ? (
+          <>
+            <Image source={avatarBackground} style={styles.avatarImage} />
+            <Text style={styles.avatarInitialText}>{item.avatarLabel}</Text>
+          </>
+        ) : (
+          <Image
+            source={assets.fileInvoiceDollar}
+            style={styles.utilityAvatarIcon}
+          />
+        )}
       </View>
+
       <View style={styles.suggestionBody}>
-        <Text style={styles.suggestionTitle}>{item.title}</Text>
+        <Text numberOfLines={1} style={styles.suggestionTitle}>
+          {item.title}
+        </Text>
+
         <View style={styles.suggestionMetaRow}>
           <View style={styles.badge}>
             <Text style={styles.badgeText}>{item.badge}</Text>
           </View>
-          <Text style={styles.suggestionSubtitle}>{item.subtitle}</Text>
+          <Text numberOfLines={1} style={styles.suggestionSubtitle}>
+            {item.subtitle}
+          </Text>
         </View>
       </View>
-      <View style={styles.suggestionActionCircle}>
-        <Text style={[styles.suggestionActionIcon, {color: item.iconTint}]}>{item.icon}</Text>
+
+      <View style={styles.actionCircle}>
+        <Image
+          source={isUtility ? assets.chevronRight : assets.commentAlt}
+          style={isUtility ? styles.actionChevron : styles.actionComment}
+        />
       </View>
     </View>
   );
@@ -134,231 +225,267 @@ function SuggestionCard({item}: SuggestionCardProps) {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: '#EFF3F8',
+    backgroundColor: '#F0F2F5',
   },
-  headerCard: {
+  scrollContent: {
+    paddingBottom: 24,
+  },
+  headerSection: {
     backgroundColor: '#FFFFFF',
-    paddingTop: 40,
-    paddingHorizontal: 16,
-    paddingBottom: 20,
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
-    shadowColor: '#BFC9D6',
-    shadowOffset: {width: 0, height: 8},
-    shadowOpacity: 0.14,
-    shadowRadius: 14,
-    elevation: 4,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
+    paddingTop: 40,
+    paddingHorizontal: 20,
+    paddingBottom: 16,
   },
-  headerRow: {
+  topNav: {
+    height: 40,
     flexDirection: 'row',
     alignItems: 'center',
   },
-  backWrap: {
-    marginRight: 10,
+  backButton: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
   },
   backIcon: {
-    color: '#232A33',
-    fontSize: 34,
-    lineHeight: 34,
-    fontWeight: '400',
+    width: 14.94,
+    height: 19.2,
+    marginLeft: 4,
   },
   title: {
-    color: '#232A33',
-    fontSize: 24,
-    fontWeight: '900',
+    marginLeft: 10,
+    color: '#1A1D1E',
+    fontSize: 20,
+    fontWeight: '700',
   },
-  searchInputWrap: {
-    marginTop: 22,
-    minHeight: 54,
-    borderRadius: 18,
-    backgroundColor: '#F1F5FB',
+  searchWrap: {
+    marginTop: 20,
+  },
+  searchInput: {
+    height: 47.43,
+    borderRadius: 16,
+    backgroundColor: '#F2F4F8',
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 10,
   },
   searchIcon: {
-    color: '#67BCDB',
-    fontSize: 24,
-    marginRight: 10,
-    lineHeight: 24,
+    width: 13.71,
+    height: 17.6,
+    marginRight: 16,
   },
   searchPlaceholder: {
-    color: '#8A8F97',
+    flex: 1,
+    color: '#757575',
     fontSize: 16,
-    fontWeight: '500',
-    flexShrink: 1,
+    lineHeight: 19,
   },
-  body: {
-    paddingHorizontal: 16,
-    paddingTop: 20,
-    paddingBottom: 28,
+  content: {
+    paddingHorizontal: 20,
+    paddingTop: 18,
   },
   sectionHeader: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 14,
   },
-  sectionHeaderAlt: {
+  featureHeader: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 20,
+    alignItems: 'center',
+    marginTop: 22,
     marginBottom: 14,
   },
   sectionTitle: {
-    color: '#20262E',
-    fontSize: 18,
-    fontWeight: '900',
+    color: '#1A1D1E',
+    fontSize: 17.6,
+    fontWeight: '700',
   },
   sectionAction: {
-    color: '#727D93',
-    fontSize: 14,
-    fontWeight: '500',
+    color: '#6B7280',
+    fontSize: 13.6,
+    fontWeight: '400',
   },
   recentWrap: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10,
+    rowGap: 10,
+    columnGap: 10,
   },
   recentChip: {
-    minHeight: 42,
-    borderRadius: 14,
+    height: 32.1,
+    borderRadius: 12,
     backgroundColor: '#FFFFFF',
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 14,
-    shadowColor: '#C9D3DE',
-    shadowOffset: {width: 0, height: 6},
-    shadowOpacity: 0.12,
-    shadowRadius: 12,
-    elevation: 3,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 2,
   },
   recentClock: {
-    color: '#98A4B6',
-    fontSize: 18,
+    width: 10.46,
+    height: 12.8,
     marginRight: 8,
   },
   recentText: {
-    color: '#707A8F',
-    fontSize: 15,
-    fontWeight: '500',
+    color: '#6B7280',
+    fontSize: 14.4,
+    fontWeight: '400',
   },
   featureGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    rowGap: 14,
+    rowGap: 12,
   },
   featureCard: {
-    width: '47.5%',
-    borderRadius: 18,
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 14,
-    paddingVertical: 14,
-    shadowColor: '#C9D3DE',
-    shadowOffset: {width: 0, height: 6},
-    shadowOpacity: 0.12,
-    shadowRadius: 12,
-    elevation: 3,
-  },
-  featureIconWrap: {
-    width: 56,
-    height: 56,
+    width: '48%',
+    minHeight: 82.55,
     borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  featureIcon: {
-    fontSize: 24,
-  },
-  featureBody: {
-    marginTop: 12,
-  },
-  featureTitle: {
-    color: '#22272E',
-    fontSize: 16,
-    fontWeight: '900',
-    lineHeight: 22,
-  },
-  featureSubtitle: {
-    color: '#717D91',
-    fontSize: 13,
-    marginTop: 4,
-  },
-  suggestionList: {
-    marginTop: 10,
-    gap: 12,
-  },
-  suggestionCard: {
+    backgroundColor: '#FFFFFF',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 2,
+    paddingHorizontal: 15,
+    paddingVertical: 15,
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 18,
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 14,
-    paddingVertical: 14,
-    shadowColor: '#C9D3DE',
-    shadowOffset: {width: 0, height: 6},
-    shadowOpacity: 0.12,
-    shadowRadius: 12,
-    elevation: 3,
   },
-  suggestionAvatar: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
+  featureIconWrap: {
+    width: 42,
+    height: 40,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
   },
-  suggestionAvatarText: {
-    color: '#FFFFFF',
-    fontSize: 22,
+  featureIcon: {
+    width: 14.94,
+    height: 19.2,
+  },
+  featureBody: {
+    flex: 1,
+  },
+  featureTitle: {
+    color: '#1A1D1E',
+    fontSize: 14.4,
+    lineHeight: 17,
     fontWeight: '700',
+  },
+  featureSubtitle: {
+    marginTop: 4,
+    color: '#6B7280',
+    fontSize: 12,
+    fontWeight: '400',
+  },
+  suggestionList: {
+    marginTop: 14,
+    rowGap: 12,
+  },
+  suggestionCard: {
+    minHeight: 72,
+    borderRadius: 16,
+    backgroundColor: '#FFFFFF',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 2,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  suggestionAvatar: {
+    width: 50.41,
+    height: 48,
+    borderRadius: 24,
+    marginRight: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  suggestionAvatarPerson: {
+    backgroundColor: '#EEEEEE',
+  },
+  suggestionAvatarUtility: {
+    backgroundColor: '#E0F2F7',
+  },
+  avatarImage: {
+    width: 48,
+    height: 48,
+    resizeMode: 'cover',
+  },
+  avatarInitialText: {
+    position: 'absolute',
+    color: '#FFFFFF',
+    fontSize: 28,
+    fontWeight: '400',
+  },
+  utilityAvatarIcon: {
+    width: 14.94,
+    height: 19.2,
   },
   suggestionBody: {
     flex: 1,
-  },
-  suggestionTitle: {
-    color: '#20262E',
-    fontSize: 16,
-    fontWeight: '900',
-  },
-  suggestionMetaRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 8,
-    flexWrap: 'wrap',
-  },
-  badge: {
-    backgroundColor: '#F2F4F7',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 10,
     marginRight: 8,
   },
-  badgeText: {
-    color: '#6D7687',
-    fontSize: 12,
-    fontWeight: '500',
+  suggestionTitle: {
+    color: '#1A1D1E',
+    fontSize: 15.2,
+    fontWeight: '700',
   },
-  suggestionSubtitle: {
-    color: '#737E91',
-    fontSize: 14,
-    fontWeight: '500',
+  suggestionMetaRow: {
+    marginTop: 6,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  suggestionActionCircle: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    backgroundColor: '#F3F6FA',
+  badge: {
+    height: 20,
+    borderRadius: 6,
+    backgroundColor: '#F3F4F6',
+    paddingHorizontal: 8,
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: 10,
+    marginRight: 6,
   },
-  suggestionActionIcon: {
-    fontSize: 18,
-    fontWeight: '700',
+  badgeText: {
+    color: '#6B7280',
+    fontSize: 11.2,
+    fontWeight: '400',
+  },
+  suggestionSubtitle: {
+    flex: 1,
+    color: '#6B7280',
+    fontSize: 12.8,
+    fontWeight: '400',
+  },
+  actionCircle: {
+    width: 33.6,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#F2F4F8',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  actionComment: {
+    width: 11.2,
+    height: 14.4,
+  },
+  actionChevron: {
+    width: 11.2,
+    height: 14.4,
   },
 });

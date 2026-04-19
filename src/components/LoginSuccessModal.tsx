@@ -1,21 +1,29 @@
-﻿import React from 'react';
-import {Pressable, StyleSheet, Text, View} from 'react-native';
-import {VI_STRINGS} from '../constants/vi';
+import React from 'react';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 type Props = {
   onContinue: () => void;
 };
 
-export function LoginSuccessModal({onContinue}: Props) {
+const successBorder = require('../assets/login/icons/success_border.png');
+
+export function LoginSuccessModal({ onContinue }: Props) {
   return (
     <View style={styles.overlay}>
-      <View style={styles.modal}>
-        <Text style={styles.title}>{VI_STRINGS.loginSuccess}</Text>
-        <View style={styles.checkCircle}>
-          <Text style={styles.checkMark}>✓</Text>
+      <View style={styles.card}>
+        <Text style={styles.title}>Đăng nhập thành công</Text>
+
+        <View style={styles.successIconWrap}>
+          <Image source={successBorder} style={styles.successBorder} />
+
+          <View style={styles.checkWrap}>
+            <View style={styles.checkLeft} />
+            <View style={styles.checkRight} />
+          </View>
         </View>
+
         <Pressable hitSlop={8} onPress={onContinue} style={styles.continueWrap}>
-          <Text style={styles.continueText}>{VI_STRINGS.continue}</Text>
+          <Text style={styles.continueText}>Tiếp tục</Text>
         </Pressable>
       </View>
     </View>
@@ -28,62 +36,73 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(39, 49, 61, 0.22)',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 28,
   },
-  modal: {
-    width: '76%',
-    minHeight: 420,
+  card: {
+    width: 269,
+    height: 316,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#E6E6E6',
     backgroundColor: '#FFFFFF',
-    borderRadius: 30,
-    paddingTop: 74,
-    paddingBottom: 38,
-    paddingHorizontal: 26,
     alignItems: 'center',
-    justifyContent: 'space-between',
-    shadowColor: '#8094B1',
-    shadowOffset: {width: 0, height: 18},
-    shadowOpacity: 0.2,
-    shadowRadius: 24,
-    elevation: 8,
   },
   title: {
-    color: '#4A5A72',
-    fontSize: 30,
-    fontWeight: '700',
-    lineHeight: 60,
+    marginTop: 62,
+    width: 151,
+    color: '#374151',
+    fontSize: 18,
     textAlign: 'center',
-    textShadowColor: 'rgba(96, 112, 132, 0.28)',
-    textShadowOffset: {width: 0, height: 2},
-    textShadowRadius: 2,
+    fontWeight: '500',
+    lineHeight: 24,
   },
-  checkCircle: {
-    width: 84,
-    height: 84,
-    borderRadius: 42,
-    borderWidth: 4,
-    borderColor: '#6A9EF0',
+  successIconWrap: {
+    width: 88.89,
+    height: 78.9,
+    marginTop: 32,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 6,
   },
-  checkMark: {
-    color: '#6A9EF0',
-    fontSize: 26,
-    fontWeight: '400',
-    marginTop: -3,
+  successBorder: {
+    width: 63.43,
+    height: 63.33,
+    transform: [{ rotate: '180deg' }],
+  },
+  checkWrap: {
+    position: 'absolute',
+    width: 26.57,
+    height: 25.53,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkLeft: {
+    position: 'absolute',
+    width: 3.33,
+    height: 16.67,
+    borderRadius: 111.11,
+    backgroundColor: '#60A5FA',
+    left: 2,
+    top: 9.5,
+    transform: [{ rotate: '-45deg' }],
+  },
+  checkRight: {
+    position: 'absolute',
+    width: 3.33,
+    height: 28.33,
+    borderRadius: 111.11,
+    backgroundColor: '#60A5FA',
+    left: 15.8,
+    top: 0,
+    transform: [{ rotate: '35deg' }],
   },
   continueWrap: {
-    alignSelf: 'flex-end',
-    marginTop: 18,
+    position: 'absolute',
+    right: 35,
+    bottom: 24,
   },
   continueText: {
-    color: '#B3BCC9',
-    fontSize: 28,
+    color: '#9CA3AF',
+    fontSize: 18,
     fontWeight: '500',
-    textShadowColor: 'rgba(125, 134, 146, 0.18)',
-    textShadowOffset: {width: 0, height: 2},
-    textShadowRadius: 2,
+    textAlign: 'center',
   },
 });
-
-

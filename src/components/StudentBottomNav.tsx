@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type Props = {
   onOpenProfile: () => void;
@@ -14,8 +15,19 @@ const assets = {
 };
 
 export function StudentBottomNav({ onOpenProfile }: Props) {
+  const insets = useSafeAreaInsets();
+
+  const bottomNavStyle = useMemo(
+    () => ({
+      bottom: -insets.bottom,
+      height: 70.8 + insets.bottom,
+      paddingBottom: insets.bottom,
+    }),
+    [insets.bottom],
+  );
+
   return (
-    <View style={styles.bottomNav}>
+    <View style={[styles.bottomNav, bottomNavStyle]}>
       <View style={styles.navRow}>
         <NavItem active iconImage={assets.home} label="Trang chủ" />
         <NavItem iconImage={assets.class} label="Lớp học" />
