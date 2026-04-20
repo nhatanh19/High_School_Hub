@@ -1,0 +1,53 @@
+{
+  "chat": {
+    "id": "chat-class-chem",
+    "title": "Hóa học",
+    "subtitle": "Cuộc thảo luận"
+  },
+  "messages": [
+    {
+      "id": "m1",
+      "author": "other",
+      "authorName": "Bạn cùng lớp",
+      "type": "text",
+      "text": "Đây là file tài liệu của lớp sinh học hôm nay"
+    },
+    {
+      "id": "m2",
+      "author": "other",
+      "authorName": "Bạn cùng lớp",
+      "type": "file",
+      "fileKind": "pdf",
+      "fileName": "Introduction to force"
+    },
+    {
+      "id": "m3",
+      "author": "other",
+      "authorName": "Bạn cùng lớp",
+      "type": "file",
+      "fileKind": "doc",
+      "fileName": "Work and energy"
+    },
+    {
+      "id": "m4",
+      "author": "me",
+      "type": "text",
+      "text": "Oke cảm ơn bạn"
+    },
+    {
+      "id": "m5",
+      "author": "other",
+      "authorName": "Bạn cùng lớp",
+      "type": "text",
+      "text": "Cái này mình vừa kiếm được ở trên mạng nè"
+    },
+    {
+      "id": "m6",
+      "author": "me",
+      "type": "typing"
+    }
+  ],
+  "composer": {
+    "placeholder": "Nhập nội dung"
+  }
+}

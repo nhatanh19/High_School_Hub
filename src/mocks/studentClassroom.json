@@ -1,0 +1,103 @@
+{
+  "headerTitle": "Lớp học của tôi",
+  "filters": {
+    "student": { "label": "Học sinh", "count": 42 },
+    "teacher": { "label": "Giáo viên", "count": 14 }
+  },
+  "sections": {
+    "leadership": {
+      "title": "Ban cán sự",
+      "count": 3,
+      "editLabel": "Điều chỉnh"
+    },
+    "members": { "title": "Thành viên", "count": 37 },
+    "teachers": { "title": "Thành viên", "count": 14 }
+  },
+  "studentStats": [
+    { "label": "Tổng", "tone": "neutral", "value": "40" },
+    { "label": "Nam", "tone": "blue", "value": "18" },
+    { "label": "Nữ", "tone": "pink", "value": "22" }
+  ],
+  "leadership": [
+    {
+      "id": "hs003",
+      "name": "Vũ Gia Minh",
+      "sex": "Nam",
+      "role": "Lớp trưởng",
+      "accent": "#63BAD5",
+      "border": "rgba(99, 186, 213, 0.3)",
+      "cardHeight": 86,
+      "avatarKey": "avatarLeader",
+      "contacts": [
+        { "id": "ct-003-1", "relation": "MẸ", "name": "Phạm Thu Hà", "phone": "0912745638" },
+        { "id": "ct-003-2", "relation": "BỐ", "name": "Vũ Quang Đức", "phone": "0984312756" }
+      ]
+    },
+    {
+      "id": "hs007",
+      "name": "Đặng Ngọc Anh",
+      "sex": "Nữ",
+      "role": "Bí thư",
+      "accent": "#FB923C",
+      "border": "#FED7AA",
+      "cardHeight": 86,
+      "avatarKey": "avatarSecretary",
+      "contacts": [
+        { "id": "ct-007-1", "relation": "MẸ", "name": "Lê Thị Hằng", "phone": "0976552014" },
+        { "id": "ct-007-2", "relation": "BỐ", "name": "Đặng Hữu Lâm", "phone": "0903125884" }
+      ]
+    },
+    {
+      "id": "hs011",
+      "name": "Ngô Quốc Bảo",
+      "sex": "Nam",
+      "role": "LP Học tập",
+      "accent": "#A855F7",
+      "border": "#E9D5FF",
+      "cardHeight": 74,
+      "avatarKey": "avatarStudy",
+      "contacts": [
+        { "id": "ct-011-1", "relation": "MẸ", "name": "Nguyễn Mỹ Duyên", "phone": "0938456720" }
+      ]
+    }
+  ],
+  "members": [
+    {
+      "id": "hs015",
+      "initial": "T",
+      "name": "Trịnh Nhật Nam",
+      "sex": "Nam",
+      "tone": "blue",
+      "contacts": [
+        { "id": "ct-015-1", "relation": "MẸ", "name": "Hoàng Ngọc Yến", "phone": "0982775314" },
+        { "id": "ct-015-2", "relation": "BỐ", "name": "Trịnh Quang Huy", "phone": "0917786342" }
+      ]
+    },
+    {
+      "id": "hs020",
+      "initial": "L",
+      "name": "Lương Thanh Vy",
+      "sex": "Nữ",
+      "tone": "pink",
+      "contacts": [
+        { "id": "ct-020-1", "relation": "MẸ", "name": "Lương Minh Châu", "phone": "0972019655" }
+      ]
+    }
+  ],
+  "teachers": [
+    {
+      "id": "gv001",
+      "initial": "H",
+      "name": "Hồ Minh Quân - Toán",
+      "phone": "0919823314",
+      "tone": "blue"
+    },
+    {
+      "id": "gv002",
+      "initial": "P",
+      "name": "Phan Diệu Linh - Ngữ văn",
+      "phone": "0936154027",
+      "tone": "pink"
+    }
+  ]
+}

@@ -11,6 +11,7 @@ import {
 
 type Props = {
   onBack: () => void;
+  onOpenQuiz: () => void;
 };
 
 type FeatureItem = {
@@ -233,7 +234,7 @@ const allFeatures: FeatureItem[] = [
   },
 ];
 
-export function StudentAllFeaturesScreen({ onBack }: Props) {
+export function StudentAllFeaturesScreen({ onBack, onOpenQuiz }: Props) {
   const { width } = useWindowDimensions();
 
   const layout = useMemo(() => {
@@ -350,7 +351,12 @@ export function StudentAllFeaturesScreen({ onBack }: Props) {
               <Text style={styles.allTitle}>Tất cả chức năng</Text>
               <View style={[styles.allGrid, allGridStyle]}>
                 {allFeatures.map(item => (
-                  <FeatureTile item={item} key={item.id} layout={layout} />
+                  <FeatureTile
+                    item={item}
+                    key={item.id}
+                    layout={layout}
+                    onPress={item.id === 'all-quiz' ? onOpenQuiz : undefined}
+                  />
                 ))}
               </View>
             </View>
@@ -364,6 +370,7 @@ export function StudentAllFeaturesScreen({ onBack }: Props) {
 function FeatureTile({
   item,
   layout,
+  onPress,
 }: {
   item: FeatureItem;
   layout: {
@@ -371,6 +378,7 @@ function FeatureTile({
     tileHeight: number;
     tileWidth: number;
   };
+  onPress?: () => void;
 }) {
   const iconStyle = {
     width: item.iconWidth * layout.scale,
@@ -404,14 +412,14 @@ function FeatureTile({
   };
 
   return (
-    <View style={[styles.featureTile, tileStyle]}>
+    <Pressable onPress={onPress} style={[styles.featureTile, tileStyle]}>
       <View style={[styles.featureCircle, circleStyle, tintStyle]}>
         <Image source={item.icon} style={[styles.featureIcon, iconStyle]} />
       </View>
       <Text numberOfLines={1} style={[styles.featureLabel, labelStyle]}>
         {item.label}
       </Text>
-    </View>
+    </Pressable>
   );
 }
 

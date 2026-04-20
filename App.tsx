@@ -16,6 +16,9 @@ import { SplashScreen } from './src/screens/SplashScreen';
 import { StudentAttendanceScreen } from './src/screens/StudentAttendanceScreen';
 import { StudentAllFeaturesScreen } from './src/screens/StudentAllFeaturesScreen';
 import { StudentCreatePostScreen } from './src/screens/StudentCreatePostScreen';
+import { StudentClassroomScreen } from './src/screens/StudentClassroomScreen';
+import { StudentChatScreen } from './src/screens/StudentChatScreen';
+import { StudentNewChatScreen } from './src/screens/StudentNewChatScreen';
 import { StudentDashboardScreen } from './src/screens/StudentDashboardScreen';
 import { StudentEditProfileScreen } from './src/screens/StudentEditProfileScreen';
 import { StudentExamScheduleScreen } from './src/screens/StudentExamScheduleScreen';
@@ -149,9 +152,11 @@ function App() {
           <StudentDashboardScreen
             onOpenAttendance={() => setActiveScreen('student-attendance')}
             onOpenAllFeatures={() => setActiveScreen('student-all-features')}
+            onOpenClassroom={() => setActiveScreen('student-classroom')}
+            onOpenChat={() => setActiveScreen('student-chat')}
             onOpenExamSchedule={() => setActiveScreen('student-exam-schedule')}
             onOpenForum={() => setActiveScreen('student-forum')}
-            onOpenHomework={() => setActiveScreen('student-homework')}
+            onOpenHomework={() => undefined}
             onOpenLeaveRequest={() => setActiveScreen('student-leave-request')}
             onOpenNotifications={() => setActiveScreen('student-notifications')}
             onOpenProfile={() => setActiveScreen('student-settings')}
@@ -219,13 +224,38 @@ function App() {
         ) : null}
         {activeScreen === 'student-homework' ? (
           <StudentHomeworkScreen
-            onBack={() => setActiveScreen('student-dashboard')}
+            onBack={() => setActiveScreen('student-all-features')}
             onOpenQuiz={() => setActiveScreen('student-quiz-question')}
+          />
+        ) : null}
+        {activeScreen === 'student-classroom' ? (
+          <StudentClassroomScreen
+            onBack={() => setActiveScreen('student-dashboard')}
+            onOpenChat={() => setActiveScreen('student-chat')}
+            onOpenHome={() => setActiveScreen('student-dashboard')}
+            onOpenProfile={() => setActiveScreen('student-settings')}
+          />
+        ) : null}
+        {activeScreen === 'student-chat' ? (
+          <StudentChatScreen
+            onOpenCreateNew={() => setActiveScreen('student-chat-new')}
+            onOpenClass={() => setActiveScreen('student-classroom')}
+            onOpenHome={() => setActiveScreen('student-dashboard')}
+            onOpenProfile={() => setActiveScreen('student-settings')}
+          />
+        ) : null}
+        {activeScreen === 'student-chat-new' ? (
+          <StudentNewChatScreen
+            onBack={() => setActiveScreen('student-chat')}
+            onOpenClass={() => setActiveScreen('student-classroom')}
+            onOpenHome={() => setActiveScreen('student-dashboard')}
+            onOpenProfile={() => setActiveScreen('student-settings')}
           />
         ) : null}
         {activeScreen === 'student-all-features' ? (
           <StudentAllFeaturesScreen
             onBack={() => setActiveScreen('student-dashboard')}
+            onOpenQuiz={() => setActiveScreen('student-homework')}
           />
         ) : null}
         {activeScreen === 'student-quiz-question' ? (

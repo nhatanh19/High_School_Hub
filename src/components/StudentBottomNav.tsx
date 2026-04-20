@@ -3,6 +3,10 @@ import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type Props = {
+  activeTab?: 'home' | 'class' | 'chat' | 'profile';
+  onOpenClass?: () => void;
+  onOpenChat?: () => void;
+  onOpenHome?: () => void;
   onOpenProfile: () => void;
 };
 
@@ -14,7 +18,13 @@ const assets = {
   scan: require('../assets/dashboard/student/icons/scan.png'),
 };
 
-export function StudentBottomNav({ onOpenProfile }: Props) {
+export function StudentBottomNav({
+  activeTab = 'home',
+  onOpenClass,
+  onOpenChat,
+  onOpenHome,
+  onOpenProfile,
+}: Props) {
   const insets = useSafeAreaInsets();
 
   const bottomNavStyle = useMemo(
@@ -29,13 +39,29 @@ export function StudentBottomNav({ onOpenProfile }: Props) {
   return (
     <View style={[styles.bottomNav, bottomNavStyle]}>
       <View style={styles.navRow}>
-        <NavItem active iconImage={assets.home} label="Trang chủ" />
-        <NavItem iconImage={assets.class} label="Lớp học" />
+        <NavItem
+          active={activeTab === 'home'}
+          iconImage={assets.home}
+          label="Trang chủ"
+          onPress={onOpenHome}
+        />
+        <NavItem
+          active={activeTab === 'class'}
+          iconImage={assets.class}
+          label="Lớp học"
+          onPress={onOpenClass}
+        />
 
         <View style={styles.centerSpacer} />
 
-        <NavItem iconImage={assets.chat} label="Trò chuyện" />
         <NavItem
+          active={activeTab === 'chat'}
+          iconImage={assets.chat}
+          label="Trò chuyện"
+          onPress={onOpenChat}
+        />
+        <NavItem
+          active={activeTab === 'profile'}
           iconImage={assets.profile}
           label="Cá nhân"
           onPress={onOpenProfile}

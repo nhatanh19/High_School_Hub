@@ -27,12 +27,14 @@ import type {
 type Props = {
   onOpenAttendance: () => void;
   onOpenAllFeatures: () => void;
+  onOpenClassroom: () => void;
   onOpenExamSchedule: () => void;
   onOpenForum: () => void;
   onOpenHomework: () => void;
   onOpenLeaveRequest: () => void;
   onOpenNotifications: () => void;
   onOpenProfile: () => void;
+  onOpenChat: () => void;
   onOpenScore: () => void;
   onOpenSchedule: () => void;
   onOpenSearch: () => void;
@@ -76,12 +78,14 @@ const assets = {
 export function StudentDashboardScreen({
   onOpenAttendance,
   onOpenAllFeatures,
+  onOpenClassroom,
   onOpenExamSchedule,
   onOpenForum,
   onOpenHomework,
   onOpenLeaveRequest,
   onOpenNotifications,
   onOpenProfile,
+  onOpenChat,
   onOpenScore,
   onOpenSchedule,
   onOpenSearch,
@@ -216,7 +220,12 @@ export function StudentDashboardScreen({
         </View>
       </ScrollView>
 
-      <StudentBottomNav onOpenProfile={onOpenProfile} />
+      <StudentBottomNav
+        activeTab="home"
+        onOpenClass={onOpenClassroom}
+        onOpenChat={onOpenChat}
+        onOpenProfile={onOpenProfile}
+      />
     </View>
   );
 }

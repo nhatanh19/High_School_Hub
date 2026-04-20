@@ -1,5 +1,12 @@
-import React, { useState } from 'react';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import {
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  useWindowDimensions,
+} from 'react-native';
 
 type Props = {
   onBack: () => void;
@@ -48,6 +55,7 @@ const mockQuestions = [
 ];
 
 export function StudentQuizQuestionScreen({ onBack, onSubmit }: Props) {
+  const { width } = useWindowDimensions();
   const [activeIndex, setActiveIndex] = useState(0);
   const [showExitPopup, setShowExitPopup] = useState(false);
   const activeQuestion = mockQuestions[activeIndex];
@@ -79,6 +87,29 @@ export function StudentQuizQuestionScreen({ onBack, onSubmit }: Props) {
     setShowExitPopup(false);
     onBack();
   };
+
+  const questionLayout = useMemo(() => {
+    const availableWidth = Math.max(280, width - 92);
+    const scale = Math.max(0.82, Math.min(1, availableWidth / 327));
+
+    return {
+      cardHeight: 232 * scale,
+      cardWidth: 327 * scale,
+      hintFontSize: 14 * scale,
+      hintLeft: 67 * scale,
+      hintTop: 33 * scale,
+      hintWidth: 195 * scale,
+      noHeight: 48 * scale,
+      noLeft: 15 * scale,
+      noTop: 19 * scale,
+      noWidth: 48.3 * scale,
+      textFontSize: 18 * scale,
+      textLeft: 61 * scale,
+      textLineHeight: 24.3 * scale,
+      textTop: 92 * scale,
+      textWidth: 200 * scale,
+    };
+  }, [width]);
 
   return (
     <View style={styles.screen}>
@@ -118,11 +149,64 @@ export function StudentQuizQuestionScreen({ onBack, onSubmit }: Props) {
             <Image source={assets.navLeft} style={styles.navIcon} />
           </Pressable>
 
-          <View style={styles.questionCard}>
-            <Image source={assets.cardBg} style={styles.questionCardBg} />
-            <Image source={assets.questionNo} style={styles.questionNoIcon} />
-            <Text style={styles.questionHint}>Choose the right answer:</Text>
-            <Text style={styles.questionText}>{activeQuestion.prompt}</Text>
+          <View
+            style={[
+              styles.questionCard,
+              {
+                height: questionLayout.cardHeight,
+                width: questionLayout.cardWidth,
+              },
+            ]}
+          >
+            <Image
+              source={assets.cardBg}
+              style={[
+                styles.questionCardBg,
+                {
+                  height: questionLayout.cardHeight,
+                  width: questionLayout.cardWidth,
+                },
+              ]}
+            />
+            <Image
+              source={assets.questionNo}
+              style={[
+                styles.questionNoIcon,
+                {
+                  height: questionLayout.noHeight,
+                  left: questionLayout.noLeft,
+                  top: questionLayout.noTop,
+                  width: questionLayout.noWidth,
+                },
+              ]}
+            />
+            <Text
+              style={[
+                styles.questionHint,
+                {
+                  fontSize: questionLayout.hintFontSize,
+                  left: questionLayout.hintLeft,
+                  top: questionLayout.hintTop,
+                  width: questionLayout.hintWidth,
+                },
+              ]}
+            >
+              Choose the right answer:
+            </Text>
+            <Text
+              style={[
+                styles.questionText,
+                {
+                  fontSize: questionLayout.textFontSize,
+                  left: questionLayout.textLeft,
+                  lineHeight: questionLayout.textLineHeight,
+                  top: questionLayout.textTop,
+                  width: questionLayout.textWidth,
+                },
+              ]}
+            >
+              {activeQuestion.prompt}
+            </Text>
           </View>
 
           <Pressable

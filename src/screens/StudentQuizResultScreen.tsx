@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   Image,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -31,349 +32,290 @@ const assets = {
   resultCardBg: require('../assets/homework/student/result/result_card_bg.png'),
 };
 
-export function StudentQuizResultScreen({
-  onBack,
-  onOpenAi,
-  onOpenReview,
-}: Props) {
+export function StudentQuizResultScreen({ onBack, onOpenAi, onOpenReview }: Props) {
   const { width, height } = useWindowDimensions();
-  const scale = Math.min(width / DESIGN_WIDTH, height / DESIGN_HEIGHT);
-  const viewportWidth = DESIGN_WIDTH * scale;
-  const viewportHeight = DESIGN_HEIGHT * scale;
-  const translateX = (viewportWidth - DESIGN_WIDTH) / 2;
-  const translateY = (viewportHeight - DESIGN_HEIGHT) / 2;
+
+  const layout = useMemo(() => {
+    const scale = width / DESIGN_WIDTH;
+    return {
+      canvasHeight: DESIGN_HEIGHT * scale,
+      canvasWidth: width,
+      scale,
+      viewportHeight: Math.max(height, DESIGN_HEIGHT * scale),
+    };
+  }, [height, width]);
+
+  const S = (value: number) => value * layout.scale;
 
   return (
     <View style={styles.screen}>
-      <View
-        style={[
-          styles.viewport,
-          { width: viewportWidth, height: viewportHeight },
-        ]}
+      <ScrollView
+        bounces={false}
+        contentContainerStyle={[styles.scrollContent, { minHeight: layout.viewportHeight }]}
+        showsVerticalScrollIndicator={false}
       >
-        <View
-          style={[
-            styles.canvas,
-            { transform: [{ translateX }, { translateY }, { scale }] },
-          ]}
-        >
-          <Image source={assets.bg} style={styles.bg} />
+        <View style={{ width: layout.canvasWidth, height: layout.canvasHeight }}>
+          <Image source={assets.bg} style={[styles.bg, { left: S(-71.3066), width: S(478.3066), height: S(1325) }]} />
 
-          <View style={styles.mainContentShift}>
-            <Pressable hitSlop={8} onPress={onBack} style={styles.backButton}>
-              <Image source={assets.back} style={styles.backIcon} />
-            </Pressable>
-            <Image source={assets.avatar} style={styles.avatar} />
-            <Pressable hitSlop={8} onPress={onBack} style={styles.homeButton}>
-              <Image source={assets.home} style={styles.homeIcon} />
-            </Pressable>
+          <Pressable
+            hitSlop={8}
+            onPress={onBack}
+            style={[styles.iconButton, { left: S(24), top: S(60), width: S(24), height: S(24) }]}
+          >
+            <Image source={assets.back} style={[styles.backIcon, { width: S(24), height: S(24) }]} />
+          </Pressable>
 
-            <Text style={styles.studentName}>Bùi Quốc Văn</Text>
+          <Image
+            source={assets.avatar}
+            style={{
+              position: 'absolute',
+              left: S(147),
+              top: S(56),
+              width: S(100.608),
+              height: S(90.3283),
+              resizeMode: 'contain',
+            }}
+          />
 
-            <View style={styles.statsCard}>
-              <View style={styles.statsItem}>
-                <Image source={assets.iconScore} style={styles.statsIcon} />
-                <Text style={styles.statsLabel}>Điểm</Text>
-                <Text style={styles.statsValue}>590</Text>
-              </View>
+          <Pressable
+            hitSlop={8}
+            onPress={onBack}
+            style={[styles.iconButton, { left: S(343), top: S(58), width: S(28), height: S(28) }]}
+          >
+            <Image source={assets.home} style={{ width: S(28), height: S(28), resizeMode: 'contain' }} />
+          </Pressable>
 
-              <View style={styles.statsDivider} />
+          <Text
+            style={{
+              position: 'absolute',
+              left: S(111),
+              top: S(200),
+              width: S(152),
+              color: '#0C092A',
+              fontSize: S(24),
+              fontWeight: '500',
+              lineHeight: S(36),
+              textAlign: 'center',
+            }}
+          >
+            Bùi Quốc Văn
+          </Text>
 
-              <View style={styles.statsItemCenter}>
-                <Image source={assets.iconRank} style={styles.statsIcon} />
-                <Text style={styles.statsLabel}>Xếp hạng</Text>
-                <Text style={styles.statsValue}>#5</Text>
-              </View>
-
-              <View style={styles.statsDivider} />
-
-              <View style={styles.statsItem}>
-                <Image source={assets.iconTime} style={styles.statsIcon} />
-                <Text style={styles.statsLabel}>Thời Gian</Text>
-                <Text style={styles.statsValue}>8:50</Text>
-              </View>
-            </View>
-
-            <View style={styles.resultCard}>
-              <Image source={assets.resultCardBg} style={styles.resultCardBg} />
-              <Text style={styles.resultTitle}>
-                Bạn đã hoàn thành 10 quizz, Chúc mừng !!
-              </Text>
-              <Image source={assets.medal} style={styles.medal} />
-
-              <View style={styles.correctBox}>
-                <View style={styles.resultValueRow}>
-                  <Text style={styles.correctValue}>7</Text>
-                  <Image
-                    source={assets.iconCorrect}
-                    style={styles.resultIcon}
-                  />
-                </View>
-                <Text style={styles.correctLabel}>7 câu đúng</Text>
-              </View>
-
-              <View style={styles.wrongBox}>
-                <View style={styles.resultValueRow}>
-                  <Text style={styles.wrongValue}>3</Text>
-                  <Image source={assets.iconWrong} style={styles.resultIcon} />
-                </View>
-                <Text style={styles.wrongLabel}>3 câu sai</Text>
-              </View>
-            </View>
-
-            <Pressable onPress={onOpenReview} style={styles.reviewButton}>
-              <Text style={styles.bottomButtonText}>Xem đáp án</Text>
-            </Pressable>
-
-            <Pressable onPress={onOpenAi} style={styles.aiButton}>
-              <Text style={styles.bottomButtonText}>AI Phân tích</Text>
-            </Pressable>
+          <View
+            style={{
+              position: 'absolute',
+              left: S(24),
+              top: S(260),
+              width: layout.canvasWidth - S(48),
+              height: S(101),
+              borderRadius: S(20),
+              backgroundColor: '#0284C7',
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-evenly',
+            }}
+          >
+            <StatBlock icon={assets.iconScore} label="Điểm" scale={layout.scale} value="590" />
+            <View style={{ width: S(1.073), height: S(69), backgroundColor: 'rgba(255,255,255,0.26)' }} />
+            <StatBlock icon={assets.iconRank} label="Xếp hạng" scale={layout.scale} value="#5" />
+            <View style={{ width: S(1.073), height: S(69), backgroundColor: 'rgba(255,255,255,0.26)' }} />
+            <StatBlock icon={assets.iconTime} label="Thời Gian" scale={layout.scale} value="8:50" />
           </View>
+
+          <View
+            style={{
+              position: 'absolute',
+              left: S(24),
+              top: S(385),
+              width: layout.canvasWidth - S(48),
+              height: S(445),
+            }}
+          >
+            <Image source={assets.resultCardBg} style={styles.cardFill} />
+
+            <Text
+              style={{
+                position: 'absolute',
+                left: S(42),
+                top: S(46),
+                width: S(265.128),
+                color: '#0C092A',
+                fontSize: S(20),
+                fontWeight: '500',
+                lineHeight: S(28),
+                textAlign: 'center',
+              }}
+            >
+              Bạn đã hoàn thành 10 quizz, Chúc mừng !!
+            </Text>
+
+            <Image
+              source={assets.medal}
+              style={{
+                position: 'absolute',
+                left: S(93),
+                top: S(112),
+                width: S(158.8624),
+                height: S(148.6884),
+                resizeMode: 'contain',
+              }}
+            />
+
+            <View
+              style={{
+                position: 'absolute',
+                left: S(20),
+                top: S(278),
+                width: S(150.2752),
+                height: S(96.4465),
+                borderRadius: S(20),
+                backgroundColor: '#FFFFFF',
+                paddingHorizontal: S(17),
+                paddingTop: S(12),
+              }}
+            >
+              <View style={styles.valueRow}>
+                <Text style={{ color: '#0C092A', fontSize: S(32), fontWeight: '700', lineHeight: S(48) }}>7</Text>
+                <Image source={assets.iconCorrect} style={{ width: S(25.7615), height: S(24.1116), resizeMode: 'contain' }} />
+              </View>
+              <Text style={{ marginTop: S(-2), color: '#0C092A', fontSize: S(14), lineHeight: S(20) }}>7 câu đúng</Text>
+            </View>
+
+            <View
+              style={{
+                position: 'absolute',
+                left: S(203),
+                top: S(294),
+                width: S(116),
+              }}
+            >
+              <View style={styles.valueRow}>
+                <Text style={{ color: '#FF383C', fontSize: S(32), fontWeight: '700', lineHeight: S(48) }}>3</Text>
+                <Image source={assets.iconWrong} style={{ width: S(25.7615), height: S(24.1116), resizeMode: 'contain' }} />
+              </View>
+              <Text style={{ marginTop: S(-2), color: '#000000', fontSize: S(14), lineHeight: S(20) }}>3 câu sai</Text>
+            </View>
+          </View>
+
+          <Pressable
+            onPress={onOpenReview}
+            style={{
+              position: 'absolute',
+              left: S(55),
+              top: S(777),
+              width: S(129),
+              height: S(35),
+              borderRadius: S(12),
+              backgroundColor: '#FC5A5A',
+              alignItems: 'center',
+              justifyContent: 'center',
+              shadowColor: '#63BAD5',
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.3,
+              shadowRadius: 10,
+              elevation: 2,
+            }}
+          >
+            <Text style={{ color: '#FFFFFF', fontSize: S(18), fontWeight: '700', lineHeight: S(22) }}>Xem đáp án</Text>
+          </Pressable>
+
+          <Pressable
+            onPress={onOpenAi}
+            style={{
+              position: 'absolute',
+              left: S(212),
+              top: S(777),
+              width: S(128),
+              height: S(35),
+              borderRadius: S(12),
+              backgroundColor: '#15803D',
+              alignItems: 'center',
+              justifyContent: 'center',
+              shadowColor: '#63BAD5',
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.3,
+              shadowRadius: 10,
+              elevation: 2,
+            }}
+          >
+            <Text style={{ color: '#FFFFFF', fontSize: S(18), fontWeight: '700', lineHeight: S(22) }}>AI Phân tích</Text>
+          </Pressable>
         </View>
-      </View>
+      </ScrollView>
+    </View>
+  );
+}
+
+function StatBlock({
+  icon,
+  label,
+  scale,
+  value,
+}: {
+  icon: number;
+  label: string;
+  scale: number;
+  value: string;
+}) {
+  const S = (v: number) => v * scale;
+  return (
+    <View style={{ width: S(91.2385), alignItems: 'center' }}>
+      <Image source={icon} style={{ width: S(25.7615), height: S(24), resizeMode: 'contain' }} />
+      <Text
+        style={{
+          marginTop: S(3),
+          color: 'rgba(255,255,255,0.5)',
+          fontSize: S(12),
+          fontWeight: '500',
+          lineHeight: S(18),
+          letterSpacing: 0.04,
+          textAlign: 'center',
+        }}
+      >
+        {label}
+      </Text>
+      <Text
+        style={{
+          color: '#FFFFFF',
+          fontSize: S(16),
+          fontWeight: '700',
+          lineHeight: S(24),
+          textAlign: 'center',
+        }}
+      >
+        {value}
+      </Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  bg: {
+    position: 'absolute',
+    resizeMode: 'contain',
+  },
+  backIcon: { resizeMode: 'contain' },
+  cardFill: {
+    ...StyleSheet.absoluteFillObject,
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  iconButton: {
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   screen: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
   },
-  viewport: {
-    overflow: 'hidden',
+  scrollContent: {
+    flexGrow: 1,
   },
-  canvas: {
-    width: DESIGN_WIDTH,
-    height: DESIGN_HEIGHT,
-    backgroundColor: '#FFFFFF',
-  },
-  mainContentShift: {
-    ...StyleSheet.absoluteFillObject,
-    transform: [{ translateY: -20 }],
-  },
-  bg: {
-    position: 'absolute',
-    left: -71.31,
-    top: 0,
-    width: 478.31,
-    height: 1325,
-    resizeMode: 'cover',
-  },
-  backButton: {
-    position: 'absolute',
-    left: 24,
-    top: 60,
-    width: 24,
-    height: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  backIcon: {
-    width: 24,
-    height: 24,
-    resizeMode: 'contain',
-  },
-  avatar: {
-    position: 'absolute',
-    left: 147,
-    top: 56,
-    width: 100.61,
-    height: 90.33,
-    resizeMode: 'contain',
-  },
-  homeButton: {
-    position: 'absolute',
-    left: 343,
-    top: 58,
-    width: 28,
-    height: 28,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  homeIcon: {
-    width: 28,
-    height: 28,
-    resizeMode: 'contain',
-  },
-  studentName: {
-    position: 'absolute',
-    left: 111,
-    top: 200,
-    width: 171,
-    color: '#0C092A',
-    fontSize: 24,
-    fontWeight: '500',
-    lineHeight: 36,
-    textAlign: 'center',
-  },
-  statsCard: {
-    position: 'absolute',
-    left: 24,
-    top: 260,
-    width: 351,
-    height: 101,
-    borderRadius: 20,
-    backgroundColor: '#0284C7',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-evenly',
-  },
-  statsDivider: {
-    width: 1,
-    height: 69,
-    backgroundColor: 'rgba(255,255,255,0.26)',
-  },
-  statsItem: {
-    width: 91,
-    alignItems: 'center',
-  },
-  statsItemCenter: {
-    width: 91,
-    alignItems: 'center',
-  },
-  statsIcon: {
-    width: 25.76,
-    height: 24,
-    resizeMode: 'contain',
-  },
-  statsLabel: {
-    marginTop: 3,
-    color: 'rgba(255,255,255,0.5)',
-    fontSize: 12,
-    fontWeight: '500',
-    lineHeight: 18,
-    letterSpacing: 0.04,
-    textAlign: 'center',
-  },
-  statsValue: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '700',
-    lineHeight: 24,
-    textAlign: 'center',
-  },
-  resultCard: {
-    position: 'absolute',
-    left: 24,
-    top: 385,
-    width: 351,
-    height: 445,
-  },
-  resultCardBg: {
-    position: 'absolute',
-    width: 351,
-    height: 445,
-    resizeMode: 'cover',
-  },
-  resultTitle: {
-    position: 'absolute',
-    left: 42,
-    top: 46,
-    width: 265.13,
-    color: '#0C092A',
-    fontSize: 20,
-    fontWeight: '500',
-    lineHeight: 28,
-    textAlign: 'center',
-  },
-  medal: {
-    position: 'absolute',
-    left: 93,
-    top: 112,
-    width: 158.86,
-    height: 148.69,
-    resizeMode: 'contain',
-  },
-  correctBox: {
-    position: 'absolute',
-    left: 20,
-    top: 278,
-    width: 150.28,
-    height: 96.45,
-    borderRadius: 20,
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 17,
-    paddingTop: 12,
-  },
-  wrongBox: {
-    position: 'absolute',
-    left: 203,
-    top: 294,
-    width: 116,
-  },
-  resultValueRow: {
+  valueRow: {
     flexDirection: 'row',
     alignItems: 'center',
     columnGap: 10,
-  },
-  resultIcon: {
-    width: 25.76,
-    height: 24.11,
-    resizeMode: 'contain',
-  },
-  correctValue: {
-    color: '#0C092A',
-    fontSize: 32,
-    fontWeight: '700',
-    lineHeight: 48,
-  },
-  wrongValue: {
-    color: '#FF383C',
-    fontSize: 32,
-    fontWeight: '700',
-    lineHeight: 48,
-  },
-  correctLabel: {
-    marginTop: -2,
-    color: '#0C092A',
-    fontSize: 14,
-    lineHeight: 20,
-  },
-  wrongLabel: {
-    marginTop: -2,
-    color: '#000000',
-    fontSize: 14,
-    lineHeight: 20,
-  },
-  reviewButton: {
-    position: 'absolute',
-    left: 55,
-    top: 777,
-    width: 129,
-    height: 35,
-    borderRadius: 12,
-    backgroundColor: '#FC5A5A',
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#63BAD5',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 2,
-  },
-  aiButton: {
-    position: 'absolute',
-    left: 212,
-    top: 777,
-    width: 128,
-    height: 35,
-    borderRadius: 12,
-    backgroundColor: '#15803D',
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#63BAD5',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 2,
-  },
-  bottomButtonText: {
-    color: '#FFFFFF',
-    fontSize: 18,
-    fontWeight: '700',
-    lineHeight: 22,
   },
 });
