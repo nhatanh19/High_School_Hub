@@ -25,6 +25,15 @@ import {StudentScheduleScreen} from './src/screens/StudentScheduleScreen';
 import {StudentSearchScreen} from './src/screens/StudentSearchScreen';
 import {StudentSettingsScreen} from './src/screens/StudentSettingsScreen';
 import {StudentTuitionPaymentScreen} from './src/screens/StudentTuitionPaymentScreen';
+import {TeacherApprovalScreen} from './src/screens/TeacherApprovalScreen';
+import {TeacherAttendanceManagementScreen} from './src/screens/TeacherAttendanceManagementScreen';
+import {TeacherDashboardScreen} from './src/screens/TeacherDashboardScreen';
+import {TeacherNotificationsScreen} from './src/screens/TeacherNotificationsScreen';
+import {TeacherReportScreen} from './src/screens/TeacherReportScreen';
+import {TeacherScheduleScreen} from './src/screens/TeacherScheduleScreen';
+import {TeacherSearchScreen} from './src/screens/TeacherSearchScreen';
+import {TeacherScoreScreen} from './src/screens/TeacherScoreScreen';
+import {TeacherSettingsScreen} from './src/screens/TeacherSettingsScreen';
 
 function App() {
   const [activeScreen, setActiveScreen] = useState<ScreenKey>('splash');
@@ -104,6 +113,7 @@ function App() {
         {activeScreen === 'login' ? (
           <LoginScreen
             onBackToRoles={() => setActiveScreen('role-selection')}
+            onTeacherLoginSuccess={() => setActiveScreen('teacher-dashboard')}
             onStudentLoginSuccess={() => setActiveScreen('student-dashboard')}
             password={password}
             phoneNumber={phoneNumber}
@@ -185,6 +195,47 @@ function App() {
             onBack={() => setActiveScreen('student-leave-request')}
             profile={studentProfile}
           />
+        ) : null}
+        {activeScreen === 'teacher-dashboard' ? (
+          <TeacherDashboardScreen
+            onOpenApproval={() => setActiveScreen('teacher-approval')}
+            onOpenAttendance={() => setActiveScreen('teacher-attendance-management')}
+            onOpenNotifications={() => setActiveScreen('teacher-notifications')}
+            onOpenProfile={() => setActiveScreen('teacher-settings')}
+            onOpenReport={() => setActiveScreen('teacher-report')}
+            onOpenSchedule={() => setActiveScreen('teacher-schedule')}
+            onOpenSearch={() => setActiveScreen('teacher-search')}
+            onOpenScore={() => setActiveScreen('teacher-score')}
+          />
+        ) : null}
+        {activeScreen === 'teacher-approval' ? (
+          <TeacherApprovalScreen onBack={() => setActiveScreen('teacher-dashboard')} />
+        ) : null}
+        {activeScreen === 'teacher-attendance-management' ? (
+          <TeacherAttendanceManagementScreen
+            onBack={() => setActiveScreen('teacher-dashboard')}
+          />
+        ) : null}
+        {activeScreen === 'teacher-report' ? (
+          <TeacherReportScreen onBack={() => setActiveScreen('teacher-dashboard')} />
+        ) : null}
+        {activeScreen === 'teacher-schedule' ? (
+          <TeacherScheduleScreen onBack={() => setActiveScreen('teacher-dashboard')} />
+        ) : null}
+        {activeScreen === 'teacher-search' ? (
+          <TeacherSearchScreen onBack={() => setActiveScreen('teacher-dashboard')} />
+        ) : null}
+        {activeScreen === 'teacher-score' ? (
+          <TeacherScoreScreen onBack={() => setActiveScreen('teacher-dashboard')} />
+        ) : null}
+        {activeScreen === 'teacher-notifications' ? (
+          <TeacherNotificationsScreen
+            onBack={() => setActiveScreen('teacher-dashboard')}
+            onOpenSearch={() => setActiveScreen('teacher-search')}
+          />
+        ) : null}
+        {activeScreen === 'teacher-settings' ? (
+          <TeacherSettingsScreen onBack={() => setActiveScreen('teacher-dashboard')} />
         ) : null}
       </SafeAreaView>
     </SafeAreaProvider>

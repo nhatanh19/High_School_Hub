@@ -17,7 +17,12 @@
   | 'student-leave-request'
   | 'student-leave-request-preview'
   | 'teacher-dashboard'
+  | 'teacher-approval'
+  | 'teacher-attendance-management'
+  | 'teacher-report'
+  | 'teacher-schedule'
   | 'teacher-search'
+  | 'teacher-score'
   | 'teacher-notifications'
   | 'teacher-settings';
 
