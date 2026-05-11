@@ -1,227 +1,157 @@
-﻿import React, {useState} from 'react';
+import React from 'react';
 import {Pressable, ScrollView, StyleSheet, Text, View} from 'react-native';
-import {AppFooter} from '../components/AppFooter';
-import {ClassSwitchMenu} from '../components/ClassSwitchMenu';
 import {HighSchoolHubLogo} from '../components/HighSchoolHubLogo';
 import {
-  teacherClassOptions,
   teacherDashboardShortcuts,
   teacherNews,
   teacherProfile,
   teacherQuote,
-  todayLessons,
-  topStudents,
 } from '../mocks/teacherDashboard';
-import type {
-  DashboardLesson,
-  DashboardShortcut,
-  HighlightStudent,
-  NewsItem,
-} from '../models/dashboard';
+import type {DashboardShortcut, NewsItem} from '../models/dashboard';
 
 type Props = {
+  onOpenApproval: () => void;
+  onOpenAttendance: () => void;
   onOpenNotifications: () => void;
   onOpenProfile: () => void;
+  onOpenReport: () => void;
+  onOpenSchedule: () => void;
   onOpenSearch: () => void;
+  onOpenScore: () => void;
 };
 
 export function TeacherDashboardScreen({
+  onOpenApproval,
+  onOpenAttendance,
   onOpenNotifications,
   onOpenProfile,
+  onOpenReport,
+  onOpenSchedule,
   onOpenSearch,
+  onOpenScore,
 }: Props) {
-  const [activeClassName, setActiveClassName] = useState(teacherProfile.className);
-  const [isClassMenuVisible, setIsClassMenuVisible] = useState(false);
-
-  const handleSelectClass = (className: string) => {
-    setActiveClassName(className);
-    setIsClassMenuVisible(false);
-  };
-
   return (
     <View style={styles.screen}>
       <ScrollView
         bounces={false}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}>
-        <View style={styles.content}>
-          <View style={styles.topRow}>
-            <View style={styles.profileRow}>
-              <Pressable onPress={() => setIsClassMenuVisible(true)} style={styles.avatarPressable}>
-                <View style={styles.avatar}>
-                  <Text style={styles.avatarText}>VA</Text>
-                </View>
-              </Pressable>
-              <View>
-                <Text style={styles.profileName}>{teacherProfile.name}</Text>
-                <Text style={styles.profileClass}>{activeClassName}</Text>
-              </View>
-            </View>
+        <View style={styles.headerRow}>
+          <View style={styles.profileRow}>
+            <Pressable onPress={onOpenProfile} style={styles.avatar}>
+              <Text style={styles.avatarText}>VA</Text>
+            </Pressable>
 
-            <View style={styles.searchWrap}>
-              <Pressable onPress={onOpenSearch} style={styles.searchBox}>
-                <Text style={styles.searchIcon}>⌕</Text>
-                <Text style={styles.searchText}>Tìm Kiếm</Text>
-              </Pressable>
-              <Pressable onPress={onOpenNotifications} style={styles.bellCircle}>
-                <Text style={styles.bellIcon}>🔔</Text>
-              </Pressable>
+            <View>
+              <Text style={styles.profileName}>{teacherProfile.name}</Text>
+              <Text style={styles.profileClass}>{teacherProfile.className}</Text>
             </View>
           </View>
 
-          <View style={styles.shortcutGrid}>
-            {teacherDashboardShortcuts.map(item => (
-              <ShortcutCard item={item} key={item.id} />
-            ))}
+          <View style={styles.headerActions}>
+            <Pressable onPress={onOpenSearch} style={styles.searchBox}>
+              <Text style={styles.searchIcon}>⌕</Text>
+              <Text style={styles.searchText}>Tìm kiếm</Text>
+            </Pressable>
+            <Pressable onPress={onOpenNotifications} style={styles.bellCircle}>
+              <Text style={styles.bellIcon}>🔔</Text>
+            </Pressable>
           </View>
+        </View>
 
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Lịch học hôm nay</Text>
-            <View style={styles.datePill}>
-              <Text style={styles.datePillText}>Thứ Tư, 15/05</Text>
+        <View style={styles.shortcutGrid}>
+          {teacherDashboardShortcuts.map(item => (
+            <ShortcutCard
+              item={item}
+              key={item.id}
+              onPress={
+                item.id === 'report'
+                  ? onOpenReport
+                  : item.id === 'approval'
+                    ? onOpenApproval
+                    : item.id === 'attendance'
+                      ? onOpenAttendance
+                      : item.id === 'schedule'
+                        ? onOpenSchedule
+                        : item.id === 'score'
+                          ? onOpenScore
+                    : undefined
+              }
+            />
+          ))}
+        </View>
+
+        <View style={styles.quoteCard}>
+          <View style={styles.quoteAccent} />
+          <View style={styles.quoteBody}>
+            <Text style={styles.quoteText}>{teacherQuote.text}</Text>
+            <View style={styles.quoteFooter}>
+              <Text style={styles.quoteAuthor}>{teacherQuote.author}</Text>
+              <Text style={styles.quoteRefresh}>◌</Text>
             </View>
           </View>
+        </View>
 
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.lessonScroller}
-            contentContainerStyle={styles.lessonScrollerContent}>
-            {todayLessons.map(item => (
-              <LessonCard item={item} key={item.id} />
-            ))}
-          </ScrollView>
+        <Text style={styles.sectionTitle}>Tin tức - Sự kiện</Text>
 
-          <View style={styles.quoteCard}>
-            <View style={styles.quoteBar} />
-            <View style={styles.quoteContent}>
-              <Text style={styles.quoteText}>{teacherQuote.text}</Text>
-              <View style={styles.quoteFooter}>
-                <Text style={styles.quoteRefresh}>⟳</Text>
-                <Text style={styles.quoteAuthor}>{teacherQuote.author}</Text>
-              </View>
-            </View>
+        <View style={styles.newsList}>
+          {teacherNews.map(item => (
+            <NewsCard item={item} key={item.id} />
+          ))}
+        </View>
+
+        <View style={styles.footerBlock}>
+          <View style={styles.logoWrap}>
+            <HighSchoolHubLogo />
           </View>
-
-          <Text style={styles.sectionTitle}>Top học sinh nổi bật</Text>
-          <View style={styles.studentsRow}>
-            {topStudents.map(item => (
-              <StudentCard item={item} key={item.id} />
-            ))}
-          </View>
-
-          <Text style={styles.sectionTitle}>Tin tức - Sự kiện</Text>
-          <View style={styles.newsList}>
-            {teacherNews.map(item => (
-              <NewsCard item={item} key={item.id} />
-            ))}
-          </View>
-
-          <View style={styles.logoFooterWrap}>
-            <View style={styles.logoScaleWrap}>
-              <HighSchoolHubLogo />
-            </View>
-            <AppFooter />
-          </View>
+          <Text style={styles.brandText}>HIGH SCHOOL</Text>
+          <Text style={styles.brandTextAccent}>HUB</Text>
+          <Text style={styles.footerText}>High School Hub. All rights reserved.</Text>
         </View>
       </ScrollView>
 
       <View style={styles.bottomNav}>
-        <NavItem active icon="◔" label="Trang chủ" />
-        <NavItem icon="📖" label="Lớp học" />
+        <NavItem active icon="⌂" label="Trang chủ" />
+        <NavItem icon="▤" label="Lớp học" />
         <View style={styles.centerNav}>
-          <Text style={styles.centerNavIcon}>👜</Text>
+          <Text style={styles.centerNavIcon}>◉</Text>
         </View>
         <NavItem icon="💬" label="Trò chuyện" />
         <NavItem icon="👥" label="Cá nhân" onPress={onOpenProfile} />
       </View>
-
-      {isClassMenuVisible ? (
-        <ClassSwitchMenu
-          onClose={() => setIsClassMenuVisible(false)}
-          onSelectClass={handleSelectClass}
-          options={teacherClassOptions}
-        />
-      ) : null}
     </View>
   );
 }
 
-type ShortcutCardProps = {
+function ShortcutCard({
+  item,
+  onPress,
+}: {
   item: DashboardShortcut;
-};
-
-function ShortcutCard({item}: ShortcutCardProps) {
+  onPress?: () => void;
+}) {
   return (
-    <View style={styles.shortcutItem}>
+    <Pressable onPress={onPress} style={styles.shortcutItem}>
       <View style={[styles.shortcutCircle, {backgroundColor: item.tint}]}>
         <Text style={[styles.shortcutIcon, {color: item.iconColor}]}>{item.icon}</Text>
       </View>
       <Text style={styles.shortcutLabel}>{item.label}</Text>
-    </View>
+    </Pressable>
   );
 }
 
-type LessonCardProps = {
-  item: DashboardLesson;
-};
-
-function LessonCard({item}: LessonCardProps) {
-  const isActive = item.status != null;
-
-  return (
-    <View
-      style={[
-        styles.lessonCard,
-        {backgroundColor: item.tint},
-        isActive ? styles.lessonCardActive : null,
-      ]}>
-      <View style={styles.lessonHeader}>
-        <Text style={[styles.lessonPeriod, isActive ? styles.lessonPeriodActive : null]}>
-          {item.period}
-        </Text>
-        {item.status ? <Text style={styles.lessonStatus}>● {item.status}</Text> : null}
-      </View>
-      <Text style={[styles.lessonSubject, isActive ? styles.lessonSubjectActive : null]}>
-        {item.subject}
-      </Text>
-      <Text style={[styles.lessonRoom, isActive ? styles.lessonRoomActive : null]}>
-        📍 {item.room}
-      </Text>
-    </View>
-  );
-}
-
-type StudentCardProps = {
-  item: HighlightStudent;
-};
-
-function StudentCard({item}: StudentCardProps) {
-  return (
-    <View style={styles.studentCard}>
-      <View style={[styles.studentImage, {backgroundColor: item.tint}]}>
-        <View style={styles.studentPortrait}>
-          <Text style={styles.studentPortraitText}>{item.name.slice(0, 2)}</Text>
-        </View>
-      </View>
-      <View style={styles.studentBody}>
-        <Text style={styles.studentName}>{item.name}</Text>
-        <Text style={styles.studentClass}>{item.className}</Text>
-      </View>
-    </View>
-  );
-}
-
-type NewsCardProps = {
-  item: NewsItem;
-};
-
-function NewsCard({item}: NewsCardProps) {
+function NewsCard({item}: {item: NewsItem}) {
   return (
     <View style={styles.newsCard}>
       <View style={[styles.newsThumb, {backgroundColor: item.tint}]}>
-        <Text style={styles.newsThumbText}>HSH</Text>
+        <View style={styles.newsThumbGrid}>
+          <View style={styles.newsThumbLine} />
+          <View style={styles.newsThumbLineShort} />
+          <View style={styles.newsThumbLine} />
+          <View style={styles.newsThumbLineShort} />
+        </View>
       </View>
+
       <View style={styles.newsBody}>
         <Text style={styles.newsTitle}>{item.title}</Text>
         <Text style={styles.newsDate}>{item.dateTime}</Text>
@@ -230,14 +160,17 @@ function NewsCard({item}: NewsCardProps) {
   );
 }
 
-type NavItemProps = {
+function NavItem({
+  active = false,
+  icon,
+  label,
+  onPress,
+}: {
   active?: boolean;
   icon: string;
   label: string;
   onPress?: () => void;
-};
-
-function NavItem({active = false, icon, label, onPress}: NavItemProps) {
+}) {
   return (
     <Pressable onPress={onPress} style={styles.navItem}>
       <Text style={[styles.navIcon, active ? styles.navIconActive : null]}>{icon}</Text>
@@ -252,376 +185,280 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   scrollContent: {
-    paddingBottom: 124,
+    paddingHorizontal: 12,
+    paddingTop: 14,
+    paddingBottom: 104,
   },
-  content: {
-    paddingHorizontal: 18,
-    paddingTop: 16,
-  },
-  topRow: {
+  headerRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    justifyContent: 'space-between',
   },
   profileRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-  },
-  avatarPressable: {
-    borderRadius: 29,
   },
   avatar: {
-    width: 58,
-    height: 58,
-    borderRadius: 29,
-    backgroundColor: '#1D1D1D',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#DDE9E8',
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
+    marginRight: 10,
   },
   avatarText: {
-    color: '#FFFFFF',
-    fontSize: 18,
+    color: '#54646C',
+    fontSize: 14,
     fontWeight: '800',
   },
   profileName: {
-    color: '#141414',
-    fontSize: 17,
-    fontWeight: '900',
+    color: '#1E2B38',
+    fontSize: 16,
+    fontWeight: '800',
   },
   profileClass: {
-    color: '#8B8B8B',
-    fontSize: 14,
-    fontStyle: 'italic',
-    marginTop: 4,
+    color: '#A4AFBC',
+    fontSize: 11,
+    marginTop: 2,
   },
-  searchWrap: {
+  headerActions: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
   },
   searchBox: {
+    height: 30,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#E6EEF5',
+    backgroundColor: '#FFFFFF',
     flexDirection: 'row',
     alignItems: 'center',
-    height: 42,
-    width: 120,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#EEF2F6',
-    paddingHorizontal: 12,
-    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 10,
   },
   searchIcon: {
-    color: '#62BCD9',
-    fontSize: 22,
-    marginRight: 6,
+    color: '#7CBFDB',
+    fontSize: 13,
   },
   searchText: {
-    color: '#A2A9B2',
-    fontSize: 14,
+    color: '#A5B4C3',
+    fontSize: 11,
+    marginLeft: 5,
   },
   bellCircle: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
     borderWidth: 1,
-    borderColor: '#EEF2F6',
+    borderColor: '#E6EEF5',
+    backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#FFFFFF',
   },
   bellIcon: {
-    fontSize: 18,
+    fontSize: 14,
   },
   shortcutGrid: {
+    marginTop: 22,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginTop: 24,
-    rowGap: 26,
+    rowGap: 18,
   },
   shortcutItem: {
-    width: '24%',
+    width: '25%',
     alignItems: 'center',
   },
   shortcutCircle: {
-    width: 92,
-    height: 92,
-    borderRadius: 28,
+    width: 58,
+    height: 58,
+    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
   },
   shortcutIcon: {
-    fontSize: 34,
+    fontSize: 22,
+    fontWeight: '700',
   },
   shortcutLabel: {
-    marginTop: 10,
-    color: '#222222',
-    fontSize: 15,
+    color: '#243247',
+    fontSize: 12,
     fontWeight: '500',
     textAlign: 'center',
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 22,
-    marginBottom: 14,
-  },
-  sectionTitle: {
-    color: '#111111',
-    fontSize: 19,
-    fontWeight: '900',
-    marginTop: 18,
-    marginBottom: 14,
-  },
-  datePill: {
-    minWidth: 128,
-    height: 30,
-    borderRadius: 8,
-    backgroundColor: '#F0FAFD',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  datePillText: {
-    color: '#82C8DD',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  lessonScroller: {
-    marginHorizontal: -18,
-  },
-  lessonScrollerContent: {
-    paddingHorizontal: 18,
-    gap: 12,
-  },
-  lessonCard: {
-    width: 150,
-    minHeight: 124,
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    borderWidth: 1,
-    borderColor: '#EFF2F5',
-  },
-  lessonCardActive: {
-    borderColor: '#67BCDB',
-  },
-  lessonHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 12,
-  },
-  lessonPeriod: {
-    color: '#A7B0BC',
-    fontSize: 12,
-    fontWeight: '700',
-    backgroundColor: '#F4FBFE',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 8,
-    overflow: 'hidden',
-  },
-  lessonPeriodActive: {
-    color: '#FFFFFF',
-    backgroundColor: 'rgba(255,255,255,0.22)',
-  },
-  lessonStatus: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  lessonSubject: {
-    color: '#242424',
-    fontSize: 17,
-    fontWeight: '900',
-  },
-  lessonSubjectActive: {
-    color: '#FFFFFF',
-  },
-  lessonRoom: {
-    color: '#858B94',
-    fontSize: 14,
-    marginTop: 10,
-  },
-  lessonRoomActive: {
-    color: '#E8F7FD',
+    marginTop: 8,
+    lineHeight: 16,
   },
   quoteCard: {
     marginTop: 18,
+    borderRadius: 18,
+    backgroundColor: '#EFF8FC',
     flexDirection: 'row',
-    borderRadius: 26,
-    backgroundColor: '#ECF7FB',
-    paddingVertical: 18,
-    paddingHorizontal: 18,
-    alignItems: 'stretch',
+    paddingVertical: 14,
+    paddingHorizontal: 12,
   },
-  quoteBar: {
-    width: 5,
-    borderRadius: 4,
-    backgroundColor: '#69BFDE',
-    marginRight: 16,
+  quoteAccent: {
+    width: 4,
+    borderRadius: 999,
+    backgroundColor: '#79C4DE',
+    marginRight: 12,
   },
-  quoteContent: {
+  quoteBody: {
     flex: 1,
   },
   quoteText: {
-    color: '#1F1F1F',
-    fontSize: 16,
-    lineHeight: 34,
-    fontWeight: '500',
+    color: '#1F2A36',
+    fontSize: 14,
+    lineHeight: 20,
   },
   quoteFooter: {
+    marginTop: 10,
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 8,
-  },
-  quoteRefresh: {
-    color: '#69BFDE',
-    fontSize: 28,
+    justifyContent: 'space-between',
   },
   quoteAuthor: {
-    color: '#989898',
+    color: '#A1A8B0',
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  quoteRefresh: {
+    color: '#72BFE0',
+    fontSize: 16,
+  },
+  sectionTitle: {
+    color: '#1E2B38',
     fontSize: 16,
     fontWeight: '800',
-  },
-  studentsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 14,
-  },
-  studentCard: {
-    flex: 1,
-    borderRadius: 16,
-    overflow: 'hidden',
-    backgroundColor: '#FFFFFF',
-  },
-  studentImage: {
-    height: 136,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  studentPortrait: {
-    width: 76,
-    height: 98,
-    borderRadius: 38,
-    backgroundColor: 'rgba(255,255,255,0.45)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  studentPortraitText: {
-    color: '#5A4E22',
-    fontSize: 24,
-    fontWeight: '900',
-  },
-  studentBody: {
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-  },
-  studentName: {
-    color: '#242424',
-    fontSize: 18,
-    fontWeight: '500',
-  },
-  studentClass: {
-    color: '#878787',
-    fontSize: 14,
-    marginTop: 4,
+    marginTop: 20,
   },
   newsList: {
-    gap: 14,
+    marginTop: 12,
+    gap: 10,
   },
   newsCard: {
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: '#E8EDF4',
+    backgroundColor: '#FFFFFF',
+    padding: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 14,
-    borderRadius: 22,
-    borderWidth: 1,
-    borderColor: '#E8E8E8',
-    backgroundColor: '#FFFFFF',
   },
   newsThumb: {
-    width: 96,
-    height: 96,
-    borderRadius: 26,
+    width: 62,
+    height: 62,
+    borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 16,
+    overflow: 'hidden',
   },
-  newsThumbText: {
-    color: '#8E7B35',
-    fontSize: 20,
-    fontWeight: '900',
+  newsThumbGrid: {
+    width: 40,
+    gap: 4,
+  },
+  newsThumbLine: {
+    height: 6,
+    borderRadius: 4,
+    backgroundColor: 'rgba(255,255,255,0.92)',
+  },
+  newsThumbLineShort: {
+    width: 26,
+    height: 4,
+    borderRadius: 4,
+    backgroundColor: 'rgba(255,255,255,0.82)',
   },
   newsBody: {
     flex: 1,
+    marginLeft: 12,
   },
   newsTitle: {
-    color: '#181818',
-    fontSize: 16,
-    lineHeight: 32,
+    color: '#1E2B38',
+    fontSize: 12,
+    lineHeight: 17,
     fontWeight: '700',
   },
   newsDate: {
-    color: '#777777',
-    fontSize: 14,
+    color: '#96A2B1',
+    fontSize: 11,
     marginTop: 8,
   },
-  logoFooterWrap: {
+  footerBlock: {
     alignItems: 'center',
-    marginTop: 22,
+    marginTop: 28,
   },
-  logoScaleWrap: {
-    transform: [{scale: 0.45}],
+  logoWrap: {
+    width: 92,
+    height: 72,
+    overflow: 'hidden',
     marginBottom: -18,
+    justifyContent: 'center',
+  },
+  brandText: {
+    color: '#214B81',
+    fontSize: 12,
+    fontWeight: '900',
+    letterSpacing: 0.8,
+  },
+  brandTextAccent: {
+    color: '#F39C31',
+    fontSize: 12,
+    fontWeight: '900',
+    letterSpacing: 0.8,
+    marginTop: -2,
+  },
+  footerText: {
+    color: '#1F1F1F',
+    fontSize: 11,
+    marginTop: 8,
   },
   bottomNav: {
     position: 'absolute',
     left: 0,
     right: 0,
     bottom: 0,
-    height: 92,
-    borderTopWidth: 1,
-    borderTopColor: '#EDF0F4',
+    height: 76,
     backgroundColor: '#FFFFFF',
+    borderTopWidth: 1,
+    borderTopColor: '#E8EEF5',
     flexDirection: 'row',
-    justifyContent: 'space-around',
     alignItems: 'center',
-    paddingHorizontal: 10,
+    justifyContent: 'space-around',
+    paddingBottom: 8,
   },
   navItem: {
-    width: 62,
     alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: 54,
   },
   navIcon: {
-    color: '#D0D4DC',
-    fontSize: 28,
+    color: '#CCD2DA',
+    fontSize: 16,
   },
   navIconActive: {
     color: '#69BFDE',
   },
   navLabel: {
-    color: '#C6CAD1',
-    fontSize: 12,
-    marginTop: 6,
+    color: '#CCD2DA',
+    fontSize: 10,
+    marginTop: 4,
   },
   navLabelActive: {
     color: '#69BFDE',
     fontWeight: '700',
   },
   centerNav: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    width: 46,
+    height: 46,
+    borderRadius: 23,
     backgroundColor: '#69BFDE',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: -18,
+    marginBottom: 16,
   },
   centerNavIcon: {
     color: '#FFFFFF',
-    fontSize: 28,
+    fontSize: 18,
   },
 });

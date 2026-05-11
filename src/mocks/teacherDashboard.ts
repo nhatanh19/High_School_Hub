@@ -7,8 +7,8 @@
 } from '../models/dashboard';
 
 export const teacherProfile = {
-  className: 'Lớp 12A9',
-  name: 'Võ Nguyễn Hoàng An',
+  className: 'Lớp 12A1',
+  name: 'Nguyễn Văn A',
 };
 
 export const teacherClassOptions: TeacherClassOption[] = [
@@ -18,20 +18,20 @@ export const teacherClassOptions: TeacherClassOption[] = [
 ];
 
 export const teacherDashboardShortcuts: DashboardShortcut[] = [
-  {id: 'homework', icon: '📖', iconColor: '#117F78', label: 'Bài tập', tint: '#CDF8ED'},
+  {id: 'schedule', icon: '▦', iconColor: '#2897ED', label: 'Lịch dạy', tint: '#E4F4FF'},
   {
-    id: 'schedule',
-    icon: '🗓',
-    iconColor: '#1582C3',
-    label: 'Thời khoá biểu',
-    tint: '#DAEFFD',
+    id: 'score',
+    icon: '◫',
+    iconColor: '#F28736',
+    label: 'Sổ điểm',
+    tint: '#FFF0DF',
   },
-  {id: 'score', icon: '◔', iconColor: '#C68A00', label: 'Điểm số', tint: '#FFF3B8'},
-  {id: 'exam', icon: '📅', iconColor: '#B77E00', label: 'Lịch thi', tint: '#FFF3B8'},
-  {id: 'leave', icon: '✒', iconColor: '#E02A8A', label: 'Xin phép', tint: '#FCE2F2'},
-  {id: 'forum', icon: '💬', iconColor: '#1490D2', label: 'Diễn đàn', tint: '#DDF2FF'},
-  {id: 'attendance', icon: '📋', iconColor: '#17A048', label: 'Điểm danh', tint: '#D7F9E5'},
-  {id: 'all', icon: '▦', iconColor: '#74BFE5', label: 'Tất cả', tint: '#DDF2FF'},
+  {id: 'attendance', icon: '▣', iconColor: '#3DB669', label: 'Điểm danh', tint: '#E4F8E9'},
+  {id: 'approval', icon: '✉', iconColor: '#E35F6A', label: 'Duyệt đơn', tint: '#FFE8EC'},
+  {id: 'lesson-book', icon: '▤', iconColor: '#E55A95', label: 'Sổ đầu bài', tint: '#FFE8F1'},
+  {id: 'report', icon: '◔', iconColor: '#5766F0', label: 'Báo giảng', tint: '#E9ECFF'},
+  {id: 'parents', icon: '◌', iconColor: '#1FA8D0', label: 'Phụ huynh', tint: '#E2F8FF'},
+  {id: 'all', icon: '▥', iconColor: '#82BEDF', label: 'Tất cả', tint: '#EAF5FE'},
 ];
 
 export const todayLessons: DashboardLesson[] = [

@@ -16,6 +16,7 @@ import type { RoleKey } from '../models/navigation';
 
 type Props = {
   onBackToRoles: () => void;
+  onTeacherLoginSuccess: () => void;
   onStudentLoginSuccess: () => void;
   password: string;
   phoneNumber: string;
@@ -33,6 +34,7 @@ const assets = {
 };
 
 export function LoginScreen({
+  onTeacherLoginSuccess,
   onStudentLoginSuccess,
   password,
   phoneNumber,
@@ -51,13 +53,18 @@ export function LoginScreen({
       phoneNumber === STUDENT_DEFAULT_CREDENTIALS.phoneNumber &&
       password === STUDENT_DEFAULT_CREDENTIALS.password;
 
-    if (isStudentValid) {
+    if (isStudentValid || role === 'teacher') {
       setIsSuccessVisible(true);
     }
   };
 
   const handleContinue = () => {
     setIsSuccessVisible(false);
+    if (role === 'teacher') {
+      onTeacherLoginSuccess();
+      return;
+    }
+
     onStudentLoginSuccess();
   };
 
