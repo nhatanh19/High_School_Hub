@@ -1,6 +1,6 @@
 ﻿export const VI_STRINGS = {
   footer: '© High School Hub. All rights reserved.',
-  prompt: 'BẠN LÀ',
+  prompt: 'Vui lòng chọn vai trò',
   student: 'HỌC SINH',
   teacher: 'GIÁO VIÊN',
   or: 'hay',

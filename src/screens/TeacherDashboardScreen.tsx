@@ -1,5 +1,5 @@
 import React from 'react';
-import {Pressable, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {Image, Pressable, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {HighSchoolHubLogo} from '../components/HighSchoolHubLogo';
 import {
   teacherDashboardShortcuts,
@@ -8,6 +8,13 @@ import {
   teacherQuote,
 } from '../mocks/teacherDashboard';
 import type {DashboardShortcut, NewsItem} from '../models/dashboard';
+
+const assets = {
+  chat: require('../assets/dashboard/student/icons/chat.png'),
+  class: require('../assets/dashboard/student/icons/nav/class.png'),
+  home: require('../assets/dashboard/student/icons/nav/home.png'),
+  profile: require('../assets/dashboard/student/icons/nav/profile.png'),
+};
 
 type Props = {
   onOpenApproval: () => void;
@@ -111,13 +118,13 @@ export function TeacherDashboardScreen({
       </ScrollView>
 
       <View style={styles.bottomNav}>
-        <NavItem active icon="⌂" label="Trang chủ" />
-        <NavItem icon="▤" label="Lớp học" />
+        <NavItem active icon={assets.home} label="Trang chủ" />
+        <NavItem icon={assets.class} label="Lớp học" />
         <View style={styles.centerNav}>
           <Text style={styles.centerNavIcon}>◉</Text>
         </View>
-        <NavItem icon="💬" label="Trò chuyện" />
-        <NavItem icon="👥" label="Cá nhân" onPress={onOpenProfile} />
+        <NavItem icon={assets.chat} label="Trò chuyện" />
+        <NavItem icon={assets.profile} label="Cá nhân" onPress={onOpenProfile} />
       </View>
     </View>
   );
@@ -167,13 +174,13 @@ function NavItem({
   onPress,
 }: {
   active?: boolean;
-  icon: string;
+  icon: any;
   label: string;
   onPress?: () => void;
 }) {
   return (
     <Pressable onPress={onPress} style={styles.navItem}>
-      <Text style={[styles.navIcon, active ? styles.navIconActive : null]}>{icon}</Text>
+      <Image source={icon} style={[styles.navIconImage, active ? styles.navIconImageActive : null]} />
       <Text style={[styles.navLabel, active ? styles.navLabelActive : null]}>{label}</Text>
     </Pressable>
   );
@@ -436,8 +443,16 @@ const styles = StyleSheet.create({
     color: '#CCD2DA',
     fontSize: 16,
   },
+  navIconImage: {
+    width: 24,
+    height: 24,
+    tintColor: '#CCD2DA',
+  },
   navIconActive: {
     color: '#69BFDE',
+  },
+  navIconImageActive: {
+    tintColor: '#69BFDE',
   },
   navLabel: {
     color: '#CCD2DA',

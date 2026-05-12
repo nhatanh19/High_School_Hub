@@ -22,7 +22,6 @@ export function RoleSelectionScreen({onChooseRole, options}: Props) {
         <View style={styles.selectionBlock}>
           <Text style={styles.prompt}>{VI_STRINGS.prompt}</Text>
           <RoleButton option={options[0]} onPress={onChooseRole} />
-          <Text style={styles.orText}>{VI_STRINGS.or}</Text>
           <RoleButton option={options[1]} onPress={onChooseRole} />
         </View>
         <AppFooter />
@@ -55,9 +54,10 @@ const styles = StyleSheet.create({
   prompt: {
     marginBottom: 14,
     color: '#5D5D5D',
-    fontSize: 26,
-    fontWeight: '800',
+    fontSize: 16,
+    fontWeight: '400',
     letterSpacing: 0.2,
+    textTransform: 'none',
   },
   orText: {
     color: '#505050',
