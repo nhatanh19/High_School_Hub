@@ -16,6 +16,7 @@ type Props = {
   onOpenClass: () => void;
   onOpenHome: () => void;
   onOpenProfile: () => void;
+  onOpenConversation: (chatId: string) => void;
 };
 
 const assets = {
@@ -29,6 +30,7 @@ export function StudentChatScreen({
   onOpenClass,
   onOpenHome,
   onOpenProfile,
+  onOpenConversation,
 }: Props) {
   const [query, setQuery] = useState('');
 
@@ -77,7 +79,11 @@ export function StudentChatScreen({
         showsVerticalScrollIndicator={false}
       >
         {filteredItems.map(item => (
-          <Pressable key={item.id} style={styles.chatItem}>
+          <Pressable
+            key={item.id}
+            style={styles.chatItem}
+            onPress={() => onOpenConversation(item.id)}
+          >
             <View
               style={[
                 styles.avatar,

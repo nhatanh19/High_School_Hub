@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StatusBar, StyleSheet } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { STUDENT_DEFAULT_CREDENTIALS } from './src/mocks/auth';
@@ -15,6 +15,7 @@ import { RoleSelectionScreen } from './src/screens/RoleSelectionScreen';
 import { SplashScreen } from './src/screens/SplashScreen';
 import { StudentAllFeaturesScreen } from './src/screens/StudentAllFeaturesScreen';
 import { StudentAttendanceScreen } from './src/screens/StudentAttendanceScreen';
+import { StudentChatConversationScreen } from './src/screens/StudentChatConversationScreen';
 import { StudentChatScreen } from './src/screens/StudentChatScreen';
 import { StudentClassroomScreen } from './src/screens/StudentClassroomScreen';
 import { StudentCreatePostScreen } from './src/screens/StudentCreatePostScreen';
@@ -62,6 +63,7 @@ function App() {
   const [studentSearchReturnScreen, setStudentSearchReturnScreen] = useState<
     'student-dashboard' | 'student-notifications'
   >('student-dashboard');
+  const [activeChatId, setActiveChatId] = useState<string>('');
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -95,6 +97,11 @@ function App() {
   ) => {
     setStudentSearchReturnScreen(returnScreen);
     setActiveScreen('student-search');
+  };
+
+  const openChatConversation = (chatId: string) => {
+    setActiveChatId(chatId);
+    setActiveScreen('student-chat-conversation');
   };
 
   const updateStudentProfile = (
@@ -252,6 +259,13 @@ function App() {
             onOpenClass={() => setActiveScreen('student-classroom')}
             onOpenHome={() => setActiveScreen('student-dashboard')}
             onOpenProfile={() => setActiveScreen('student-settings')}
+            onOpenConversation={openChatConversation}
+          />
+        ) : null}
+        {activeScreen === 'student-chat-conversation' ? (
+          <StudentChatConversationScreen
+            chatId={activeChatId}
+            onBack={() => setActiveScreen('student-chat')}
           />
         ) : null}
         {activeScreen === 'student-chat-new' ? (

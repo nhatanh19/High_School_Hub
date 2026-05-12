@@ -1,4 +1,4 @@
-﻿export type ScreenKey =
+export type ScreenKey =
   | 'splash'
   | 'role-selection'
   | 'student-onboarding'
@@ -17,6 +17,7 @@
   | 'student-exam-schedule'
   | 'student-homework'
   | 'student-chat'
+  | 'student-chat-conversation'
   | 'student-chat-new'
   | 'student-classroom'
   | 'student-all-features'
